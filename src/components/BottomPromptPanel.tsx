@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Paper, TextField, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Typography, Button, CircularProgress } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 
 interface BottomPromptPanelProps {
   editPrompt: string;
@@ -74,10 +75,23 @@ const BottomPromptPanel: React.FC<BottomPromptPanelProps> = ({
             variant="contained"
             color="primary"
             size="medium"
-            startIcon={isEditing ? <CircularProgress size={16} color="inherit" /> : <EditIcon fontSize="small" />}
-            sx={{ minWidth: 100 }}
+            sx={{
+              minWidth: 0,
+              width: 48,
+              height: 48,
+              borderRadius: '50%',
+              p: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: 3,
+            }}
           >
-            {isEditing ? 'Editando...' : 'Editar'}
+            {isEditing ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              <ArrowUpwardIcon fontSize="medium" />
+            )}
           </Button>
           <Typography variant="caption" color="text.secondary">
             Tokens estimados: {estimatedTokens.toLocaleString()}
