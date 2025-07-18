@@ -62,7 +62,7 @@ export default function ResultsPanel({ images, progress }: ResultsPanelProps) {
       {images.length > 0 && (
         <Grid container spacing={1}>
           {images.map((image) => (
-            <Grid item xs={12} key={image.id}>
+            <Grid size={{ xs: 12 }} key={image.id}>
               <Paper variant="outlined" sx={{ borderRadius: 2, overflow: 'hidden', bgcolor: 'grey.50', mb: 0.5 }}>
                 <Box position="relative">
                   {isValidImage(image) ? (

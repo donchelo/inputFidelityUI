@@ -139,7 +139,7 @@ export default function ImageEditingPanel({
           <Typography variant="subtitle1" fontWeight={600}>Edición de Imagen</Typography>
         </Box>
         <Grid container spacing={1}>
-          <Grid item xs={12}>
+          <Grid size={{ xs: 12 }}>
             <FormLabel component="legend" sx={{ mb: 0.5, fontSize: 13 }}>Imagen *</FormLabel>
             {uploadedImages.length === 0 ? (
               <Box
@@ -202,10 +202,10 @@ export default function ImageEditingPanel({
             )}
           </Grid>
           {uploadedImages.length > 1 && (
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <Grid container spacing={1}>
                 {uploadedImages.slice(1).map((image) => (
-                  <Grid item xs={6} md={4} key={image.id}>
+                  <Grid size={{ xs: 6, md: 4 }} key={image.id}>
                     <Box position="relative">
                       <Avatar
                         variant="rounded"
