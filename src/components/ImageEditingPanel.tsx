@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useCallback } from 'react';
@@ -143,11 +144,30 @@ export default function ImageEditingPanel({
         onImageEdited(response.data);
         toast.success('Image edited successfully!');
       } else {
-        toast.error(response.error || 'Failed to edit image');
+        // Manejo de errores mejorado
+        if (response.errorObj) {
+          switch (response.errorObj.type) {
+            case 'VALIDATION':
+              toast.error('Error de validación: ' + response.errorObj.message);
+              break;
+            case 'NETWORK':
+              toast.error('Error de red. Por favor, verifica tu conexión e intenta de nuevo.');
+              break;
+            case 'API':
+              toast.error('Error de la API de OpenAI: ' + response.errorObj.message + (response.error ? ` (${response.error})` : ''));
+              break;
+            default:
+              toast.error('Error desconocido: ' + response.errorObj.message);
+          }
+        } else if (response.error && response.error.includes('500')) {
+          toast.error('Error interno del servidor de OpenAI (500). Intenta de nuevo más tarde o revisa los parámetros de entrada.');
+        } else {
+          toast.error(response.error || 'No se pudo editar la imagen. Intenta con otra imagen o prompt.');
+        }
       }
     } catch (error) {
       console.error('Edit error:', error);
-      toast.error('An error occurred while editing the image');
+      toast.error('Ocurrió un error inesperado al editar la imagen.');
     } finally {
       setIsEditing(false);
       onProgressUpdate({

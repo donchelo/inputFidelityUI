@@ -6,6 +6,20 @@ const openai = new OpenAI({
   dangerouslyAllowBrowser: true,
 });
 
+// Enum para tipos de error
+export enum EditImageErrorType {
+  Validation = 'VALIDATION',
+  Network = 'NETWORK',
+  API = 'API',
+  Unknown = 'UNKNOWN',
+}
+
+export interface EditImageError {
+  type: EditImageErrorType;
+  message: string;
+  details?: any;
+}
+
 export class OpenAIImageService {
   private static instance: OpenAIImageService;
   private client: OpenAI;
@@ -76,10 +90,9 @@ export class OpenAIImageService {
     }
   }
 
-  async editImage(params: ImageEditingParams): Promise<ApiResponse> {
+  async editImage(params: ImageEditingParams): Promise<ApiResponse & { errorObj?: EditImageError }> {
     try {
       const formData = new FormData();
-      
       if (params.image instanceof File) {
         formData.append('image', params.image);
       } else if (Array.isArray(params.image)) {
@@ -87,33 +100,52 @@ export class OpenAIImageService {
           formData.append(`image_${index}`, file);
         });
       }
-
       if (params.mask) {
         formData.append('mask', params.mask);
       }
-
       formData.append('prompt', params.prompt);
       formData.append('model', params.model);
       formData.append('input_fidelity', params.input_fidelity);
-      
       if (params.size) formData.append('size', params.size);
       if (params.quality) formData.append('quality', params.quality);
       if (params.output_format) formData.append('output_format', params.output_format);
-
-      const response = await this.client.images.edit({
-        image: params.image as File,
-        prompt: params.prompt,
-        model: params.model as any,
-        n: 1,
-        size: params.size as any,
-        response_format: 'url',
-      });
-
+      let response;
+      try {
+        response = await this.client.images.edit({
+          image: params.image as File,
+          prompt: params.prompt,
+          model: params.model as any,
+          n: 1,
+          size: params.size as any,
+        });
+      } catch (apiError: any) {
+        // Error de la API
+        return {
+          success: false,
+          error: 'Error de la API de OpenAI',
+          errorObj: {
+            type: EditImageErrorType.API,
+            message: apiError?.message || 'Error desconocido de la API',
+            details: apiError,
+          },
+        };
+      }
+      if (!response || !response.data) {
+        return {
+          success: false,
+          error: 'Respuesta inválida de la API',
+          errorObj: {
+            type: EditImageErrorType.API,
+            message: 'Respuesta inválida de la API',
+          },
+        };
+      }
       return {
         success: true,
         data: response.data.map((item, index) => ({
           id: `edit_${Date.now()}_${index}`,
           url: item.url || '',
+          base64: item.base64 || '', // <-- AÑADIDO
           metadata: {
             revised_prompt: item.revised_prompt,
             generation_time: Date.now(),
@@ -121,11 +153,16 @@ export class OpenAIImageService {
           },
         })),
       };
-    } catch (error) {
-      console.error('Image editing error:', error);
+    } catch (error: any) {
+      // Error de red u otro desconocido
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
+        error: error instanceof Error ? error.message : 'Error desconocido',
+        errorObj: {
+          type: error?.isAxiosError ? EditImageErrorType.Network : EditImageErrorType.Unknown,
+          message: error?.message || 'Error desconocido',
+          details: error,
+        },
       };
     }
   }

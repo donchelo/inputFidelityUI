@@ -143,82 +143,93 @@ export default function ResultsPanel({ images, progress, onImageSelect }: Result
 
       {images.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {images.map((image) => (
-            <div key={image.id} className="bg-white rounded-lg border shadow-sm overflow-hidden">
-              <div className="relative group">
-                <img
-                  src={image.url || `data:image/png;base64,${image.base64}`}
-                  alt="Generated image"
-                  className="w-full h-48 object-cover cursor-pointer image-preview"
-                  onClick={() => openImageModal(image)}
-                />
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <button
-                    onClick={() => openImageModal(image)}
-                    className="bg-white/90 hover:bg-white text-black rounded-full p-2 transition-colors"
-                  >
-                    <Eye className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
-
-              <div className="p-4 space-y-3">
-                {image.metadata.revised_prompt && (
-                  <p className="text-sm text-gray-600 line-clamp-2">
-                    {image.metadata.revised_prompt}
-                  </p>
-                )}
-
-                <div className="flex items-center justify-between text-xs text-gray-500">
-                  {image.metadata.token_consumption && (
-                    <div className="flex items-center gap-1">
-                      <Zap className="w-3 h-3" />
-                      {image.metadata.token_consumption.toLocaleString()} tokens
+          {images.map((image) => {
+            const hasValidUrl = Boolean(image.url && image.url !== '');
+            const hasValidBase64 = Boolean(image.base64 && image.base64 !== 'undefined' && image.base64 !== '');
+            return (
+              <div key={image.id} className="bg-white rounded-lg border shadow-sm overflow-hidden">
+                <div className="relative group">
+                  {hasValidUrl || hasValidBase64 ? (
+                    <img
+                      src={hasValidUrl ? image.url : `data:image/png;base64,${image.base64}`}
+                      alt="Generated image"
+                      className="w-full h-48 object-cover cursor-pointer image-preview"
+                      onClick={() => openImageModal(image)}
+                    />
+                  ) : (
+                    <div className="w-full h-48 flex items-center justify-center bg-gray-100 text-gray-400">
+                      <ImageIcon className="w-12 h-12" />
+                      <span className="ml-2">Imagen no disponible</span>
                     </div>
                   )}
-                  {image.metadata.generation_time && (
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      {new Date(image.metadata.generation_time).toLocaleTimeString()}
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => handleDownload(image)}
-                    className="flex-1 bg-primary text-primary-foreground px-3 py-2 rounded-md text-sm font-medium hover:bg-primary/90 flex items-center justify-center gap-2"
-                  >
-                    <Download className="w-4 h-4" />
-                    Download
-                  </button>
-                  
-                  <button
-                    onClick={() => handleCopyUrl(image)}
-                    className="bg-secondary text-secondary-foreground px-3 py-2 rounded-md text-sm font-medium hover:bg-secondary/90 flex items-center justify-center gap-2"
-                  >
-                    <Copy className="w-4 h-4" />
-                  </button>
-                  
-                  <button
-                    onClick={() => handleShare(image)}
-                    className="bg-secondary text-secondary-foreground px-3 py-2 rounded-md text-sm font-medium hover:bg-secondary/90 flex items-center justify-center gap-2"
-                  >
-                    <Share2 className="w-4 h-4" />
-                  </button>
-
-                  {onImageSelect && (
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <button
-                      onClick={() => onImageSelect(image)}
-                      className="bg-accent text-accent-foreground px-3 py-2 rounded-md text-sm font-medium hover:bg-accent/90 flex items-center justify-center gap-2"
+                      onClick={() => openImageModal(image)}
+                      className="bg-white/90 hover:bg-white text-black rounded-full p-2 transition-colors"
                     >
-                      <RotateCcw className="w-4 h-4" />
+                      <Eye className="w-5 h-5" />
                     </button>
+                  </div>
+                </div>
+
+                <div className="p-4 space-y-3">
+                  {image.metadata.revised_prompt && (
+                    <p className="text-sm text-gray-600 line-clamp-2">
+                      {image.metadata.revised_prompt}
+                    </p>
                   )}
+
+                  <div className="flex items-center justify-between text-xs text-gray-500">
+                    {image.metadata.token_consumption && (
+                      <div className="flex items-center gap-1">
+                        <Zap className="w-3 h-3" />
+                        {image.metadata.token_consumption.toLocaleString()} tokens
+                      </div>
+                    )}
+                    {image.metadata.generation_time && (
+                      <div className="flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        {new Date(image.metadata.generation_time).toLocaleTimeString()}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleDownload(image)}
+                      className="flex-1 bg-primary text-primary-foreground px-3 py-2 rounded-md text-sm font-medium hover:bg-primary/90 flex items-center justify-center gap-2"
+                    >
+                      <Download className="w-4 h-4" />
+                      Download
+                    </button>
+                    
+                    <button
+                      onClick={() => handleCopyUrl(image)}
+                      className="bg-secondary text-secondary-foreground px-3 py-2 rounded-md text-sm font-medium hover:bg-secondary/90 flex items-center justify-center gap-2"
+                    >
+                      <Copy className="w-4 h-4" />
+                    </button>
+                    
+                    <button
+                      onClick={() => handleShare(image)}
+                      className="bg-secondary text-secondary-foreground px-3 py-2 rounded-md text-sm font-medium hover:bg-secondary/90 flex items-center justify-center gap-2"
+                    >
+                      <Share2 className="w-4 h-4" />
+                    </button>
+
+                    {onImageSelect && (
+                      <button
+                        onClick={() => onImageSelect(image)}
+                        className="bg-accent text-accent-foreground px-3 py-2 rounded-md text-sm font-medium hover:bg-accent/90 flex items-center justify-center gap-2"
+                      >
+                        <RotateCcw className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
@@ -252,12 +263,20 @@ export default function ResultsPanel({ images, progress, onImageSelect }: Result
               </button>
             </div>
 
-            <img
-              src={selectedImage.url || `data:image/png;base64,${selectedImage.base64}`}
-              alt="Generated image"
-              className="max-w-full max-h-full object-contain transition-transform duration-200"
-              style={{ transform: `scale(${zoomLevel})` }}
-            />
+            {/* Validación de imagen ampliada */}
+            {(selectedImage.url && selectedImage.url !== '') || (selectedImage.base64 && selectedImage.base64 !== 'undefined' && selectedImage.base64 !== '') ? (
+              <img
+                src={selectedImage.url && selectedImage.url !== '' ? selectedImage.url : `data:image/png;base64,${selectedImage.base64}`}
+                alt="Generated image"
+                className="max-w-full max-h-full object-contain transition-transform duration-200"
+                style={{ transform: `scale(${zoomLevel})` }}
+              />
+            ) : (
+              <div className="w-[400px] h-[400px] flex flex-col items-center justify-center bg-gray-100 text-gray-400 rounded-lg">
+                <ImageIcon className="w-16 h-16 mb-2" />
+                <span>Imagen no disponible</span>
+              </div>
+            )}
 
             {selectedImage.metadata.revised_prompt && (
               <div className="absolute bottom-4 left-4 right-4 bg-black/70 text-white p-4 rounded-lg">

@@ -123,12 +123,9 @@ export default function ImageGenerationPanel({
     }
   };
 
-  const estimatedTokens = calculateTokenCost(
-    params.quality as 'low' | 'medium' | 'high',
-    params.size,
-    undefined,
-    params.partial_images
-  );
+  const estimatedTokens = ['low', 'medium', 'high'].includes(params.quality)
+    ? calculateTokenCost(params.quality as 'low' | 'medium' | 'high', params.size, undefined, params.partial_images)
+    : calculateTokenCost(undefined, params.size, undefined, params.partial_images);
 
   return (
     <div className="bg-card border rounded-lg p-6 space-y-6">
