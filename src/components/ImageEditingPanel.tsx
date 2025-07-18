@@ -377,6 +377,8 @@ export default function ImageEditingPanel({
                 <li>Fashion retouching</li>
                 <li>Detailed object editing</li>
               </ul>
+              <p className="font-medium mt-3 mb-1">Note:</p>
+              <p className="text-xs">Images are automatically converted to RGBA format for OpenAI API compatibility.</p>
             </div>
           </div>
         </div>

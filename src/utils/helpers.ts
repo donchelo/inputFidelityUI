@@ -136,3 +136,44 @@ export function debounce<T extends (...args: any[]) => any>(
 export function generateUniqueId(): string {
   return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 }
+
+export function convertToRGBA(file: File): Promise<File> {
+  return new Promise((resolve, reject) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      
+      if (!ctx) {
+        reject(new Error('Could not get canvas context'));
+        return;
+      }
+
+      // Draw the image on canvas
+      ctx.drawImage(img, 0, 0);
+      
+      // Convert to PNG with alpha channel
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            const convertedFile = new File([blob], file.name, {
+              type: 'image/png',
+              lastModified: Date.now(),
+            });
+            resolve(convertedFile);
+          } else {
+            reject(new Error('Failed to convert image to RGBA'));
+          }
+        },
+        'image/png',
+        1.0
+      );
+    };
+    
+    img.onerror = () => reject(new Error('Failed to load image'));
+    img.src = URL.createObjectURL(file);
+  });
+}
