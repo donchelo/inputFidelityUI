@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { ImageEditingParams, ImageUpload, ProgressState } from '@/types';
 import { isValidImageFormat, createImagePreview, formatFileSize, generateUniqueId, cn, calculateTokenCost } from '@/utils/helpers';
@@ -11,7 +11,7 @@ import { Box, Typography, Button, TextField, Radio, RadioGroup, FormControl, For
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import BottomPromptPanel from './BottomPromptPanel';
+import BottomPromptPanel from '@/components/BottomPromptPanel';
 
 interface ImageEditingPanelProps {
   onImageEdited: (images: any[]) => void;
@@ -41,6 +41,42 @@ export default function ImageEditingPanel({
   const [editPrompt, setEditPrompt] = useState('');
   const [inputFidelity, setInputFidelity] = useState<'low' | 'high'>('high');
   const [isEditing, setIsEditing] = useState(false);
+  const [progressValue, setProgressValue] = useState(0);
+
+  // Mejor práctica: useEffect para barra progresiva
+  React.useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (isEditing) {
+      setProgressValue(0);
+      onProgressUpdate({ isLoading: true, progress: 0, stage: 'processing' });
+      interval = setInterval(() => {
+        setProgressValue(prev => {
+          if (prev >= 95) {
+            clearInterval(interval!);
+            return 95;
+          }
+          return prev + 0.56; // Avance calculado para 85s hasta 95%
+        });
+      }, 500); // 500ms por tick
+    }
+    // Guardar referencia global para limpiar desde handleEdit
+    (window as any).__progressInterval = interval;
+    return () => {
+      if (interval) clearInterval(interval);
+      (window as any).__progressInterval = null;
+    };
+  }, [isEditing]);
+
+  // Sincronizar progreso visual con el padre
+  React.useEffect(() => {
+    if (isEditing && progressValue < 100) {
+      onProgressUpdate({
+        isLoading: true,
+        progress: progressValue,
+        stage: 'processing',
+      });
+    }
+  }, [progressValue, isEditing]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     acceptedFiles.forEach(async (file) => {
@@ -91,11 +127,6 @@ export default function ImageEditingPanel({
     }
 
     setIsEditing(true);
-    onProgressUpdate({
-      isLoading: true,
-      progress: 50,
-      stage: 'processing',
-    });
 
     try {
       const params: ImageEditingParams = {
@@ -121,11 +152,17 @@ export default function ImageEditingPanel({
       toast.error('Ocurrió un error inesperado al editar la imagen');
     } finally {
       setIsEditing(false);
+      // Limpiar el intervalo y completar la barra si la imagen se genera antes
+      if ((window as any).__progressInterval) {
+        clearInterval((window as any).__progressInterval);
+        (window as any).__progressInterval = null;
+      }
       onProgressUpdate({
         isLoading: false,
         progress: 100,
         stage: 'complete',
       });
+      setProgressValue(100);
     }
   };
 
