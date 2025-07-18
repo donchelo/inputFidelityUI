@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, FormEvent } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { GeneratedImage, ProgressState } from '@/types';
 import ImageEditingPanel from '@/components/ImageEditingPanel';
 import ResultsPanel from '@/components/ResultsPanel';
-import { Box, Container, Typography, Grid, Paper, Divider, useTheme, useMediaQuery } from '@mui/material';
+import { Box, Container, Typography, Grid, Paper, Divider, useTheme, useMediaQuery, TextField, Button } from '@mui/material';
 import PaletteIcon from '@mui/icons-material/Palette';
 import Image from 'next/image';
 
@@ -19,6 +19,26 @@ export default function Home() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
+  // Estado para la "contraseña"
+  const [input, setInput] = useState('');
+  const [acceso, setAcceso] = useState(false);
+  const [error, setError] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const validarAcceso = (e?: FormEvent) => {
+    if (e) e.preventDefault();
+    if (input.trim() === 'TRUE') {
+      setAcceso(true);
+      setError('');
+    } else {
+      setError('Contraseña incorrecta.');
+      setInput('');
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
+    }
+  };
+
   const handleImageEdited = (images: GeneratedImage[]) => {
     setEditedImages(prev => [...images, ...prev]);
   };
@@ -26,6 +46,42 @@ export default function Home() {
   const handleProgressUpdate = (newProgress: ProgressState) => {
     setProgress(newProgress);
   };
+
+  // Si no hay acceso, mostrar pantalla de contraseña
+  if (!acceso) {
+    return (
+      <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center" sx={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)' }}>
+        <Paper elevation={3} sx={{ p: 4, minWidth: 320, textAlign: 'center' }}>
+          <Typography variant="h6" mb={2}>Introduce la clave para acceder</Typography>
+          <form onSubmit={validarAcceso} autoComplete="off">
+            <TextField
+              variant="outlined"
+              value={input}
+              onChange={e => { setInput(e.target.value); setError(''); }}
+              fullWidth
+              inputRef={inputRef}
+              type="password"
+              error={!!error}
+              helperText={error || ' '}
+              placeholder="Escribe la clave..."
+              sx={{ mb: 2 }}
+              autoFocus
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              /* disabled={!input.trim()} */
+              type="submit"
+              sx={{ fontWeight: 600 }}
+            >
+              Entrar
+            </Button>
+          </form>
+        </Paper>
+      </Box>
+    );
+  }
 
   return (
     <Box minHeight="100vh" sx={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)' }}>
