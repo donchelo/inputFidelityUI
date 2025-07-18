@@ -13,7 +13,6 @@ export default function Home() {
     isLoading: false,
     progress: 0,
     stage: 'idle',
-    partialImages: [],
   });
 
   const handleImageEdited = (images: GeneratedImage[]) => {

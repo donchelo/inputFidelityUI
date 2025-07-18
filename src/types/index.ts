@@ -1,7 +1,6 @@
-
 export interface ImageEditingParams {
   model: string;
-  image: File | File[] | string;
+  image: File | File[];
   prompt: string;
   input_fidelity: 'low' | 'high';
   mask?: File;
@@ -26,7 +25,6 @@ export interface ApiResponse {
   success: boolean;
   data?: GeneratedImage[];
   error?: string;
-  partial_images?: string[];
 }
 
 export interface ImageUpload {
@@ -39,27 +37,4 @@ export interface ProgressState {
   isLoading: boolean;
   progress: number;
   stage: 'idle' | 'uploading' | 'processing' | 'generating' | 'complete';
-  partialImages: string[];
-}
-
-export interface UseCase {
-  id: string;
-  name: string;
-  description: string;
-  examples: string[];
-  bestPractices: string[];
-  recommendedSettings: Partial<ImageEditingParams>;
-}
-
-export interface TokenCost {
-  generation: {
-    low: { square: number; portrait: number; landscape: number };
-    medium: { square: number; portrait: number; landscape: number };
-    high: { square: number; portrait: number; landscape: number };
-  };
-  editing: {
-    low_fidelity: { base: number; tile: number };
-    high_fidelity: { base: number; additional: number };
-  };
-  partial_images: number;
 }
