@@ -93,9 +93,6 @@ const BottomPromptPanel: React.FC<BottomPromptPanelProps> = ({
               <ArrowUpwardIcon fontSize="medium" />
             )}
           </Button>
-          <Typography variant="caption" color="text.secondary">
-            Tokens estimados: {estimatedTokens.toLocaleString()}
-          </Typography>
         </Box>
       </Paper>
     </Box>
