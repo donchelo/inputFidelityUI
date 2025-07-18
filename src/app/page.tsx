@@ -52,6 +52,7 @@ export default function Home() {
     return (
       <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center" sx={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)' }}>
         <Paper elevation={3} sx={{ p: 4, minWidth: 320, textAlign: 'center' }}>
+          <Image src="/ai4u-isotipo.png" alt="AI4U Isotipo" width={40} height={40} style={{ marginBottom: 12, borderRadius: 4, objectFit: 'contain', display: 'inline-block' }} />
           <Typography variant="h6" mb={2}>Introduce la clave para acceder</Typography>
           <form onSubmit={validarAcceso} autoComplete="off">
             <TextField
