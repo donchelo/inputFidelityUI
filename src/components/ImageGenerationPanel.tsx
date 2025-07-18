@@ -145,10 +145,12 @@ export default function ImageGenerationPanel({
 
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium mb-2">
+          <label htmlFor="prompt" className="block text-sm font-medium mb-2">
             Prompt *
           </label>
           <textarea
+            id="prompt"
+            name="prompt"
             value={params.input}
             onChange={(e) => setParams({ ...params, input: e.target.value })}
             placeholder="Describe the image you want to generate..."
@@ -159,8 +161,10 @@ export default function ImageGenerationPanel({
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-2">Size</label>
+            <label htmlFor="size" className="block text-sm font-medium mb-2">Size</label>
             <select
+              id="size"
+              name="size"
               value={params.size}
               onChange={(e) => setParams({ ...params, size: e.target.value as any })}
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
@@ -173,8 +177,10 @@ export default function ImageGenerationPanel({
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Quality</label>
+            <label htmlFor="quality" className="block text-sm font-medium mb-2">Quality</label>
             <select
+              id="quality"
+              name="quality"
               value={params.quality}
               onChange={(e) => setParams({ ...params, quality: e.target.value as any })}
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
@@ -191,8 +197,10 @@ export default function ImageGenerationPanel({
           <div className="space-y-4 pt-4 border-t">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Output Format</label>
+                <label htmlFor="output-format" className="block text-sm font-medium mb-2">Output Format</label>
                 <select
+                  id="output-format"
+                  name="output-format"
                   value={params.output_format}
                   onChange={(e) => setParams({ ...params, output_format: e.target.value as any })}
                   className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
@@ -204,8 +212,10 @@ export default function ImageGenerationPanel({
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Background</label>
+                <label htmlFor="background" className="block text-sm font-medium mb-2">Background</label>
                 <select
+                  id="background"
+                  name="background"
                   value={params.background}
                   onChange={(e) => setParams({ ...params, background: e.target.value as any })}
                   className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
@@ -217,10 +227,12 @@ export default function ImageGenerationPanel({
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">
+              <label htmlFor="partial-images" className="block text-sm font-medium mb-2">
                 Streaming Partial Images: {params.partial_images}
               </label>
               <input
+                id="partial-images"
+                name="partial-images"
                 type="range"
                 min="0"
                 max="3"

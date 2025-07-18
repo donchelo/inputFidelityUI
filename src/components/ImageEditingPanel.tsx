@@ -1,41 +1,4 @@
 
-PS C:\Users\chelo\OneDrive\Escritorio\Software\inputFidelityUI> npm run dev
-
-> openai-image-generation-ui@1.0.0 dev
-> next dev
-
-  ▲ Next.js 14.2.30
-  - Local:        http://localhost:3000
-  - Environments: .env.local
-
- ✓ Starting...
- ⚠ Invalid next.config.js options detected: 
- ⚠     Expected object, received boolean at "experimental.serverActions"
- ⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
- ⚠ Server Actions are available by default now, `experimental.serverActions` option can be safely removed.
- ✓ Ready in 2.4s
- ⚠ Found a change in next.config.js. Restarting the server to apply the changes...
-  ▲ Next.js 14.2.30
-  - Local:        http://localhost:3000
-  - Environments: .env.local
-
- ✓ Starting...
- ✓ Ready in 2.6s
- ○ Compiling / ...
- ✓ Compiled / in 2.5s (787 modules)
- ⚠ Unsupported metadata viewport is configured in metadata export in /. Please move it to viewport export instead.
-Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
- ⚠ Unsupported metadata themeColor is configured in metadata export in /. Please move it to viewport export instead.
-Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
- GET / 200 in 2962ms
- ✓ Compiled in 415ms (377 modules)
- ○ Compiling /_not-found ...
- ✓ Compiled /_not-found in 713ms (776 modules)
- ⚠ Unsupported metadata viewport is configured in metadata export in /.well-known/appspecific/com.chrome.devtools.json. Please move it to viewport export instead.
-Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
- ⚠ Unsupported metadata themeColor is configured in metadata export in /.well-known/appspecific/com.chrome.devtools.json. Please move it to viewport export instead.
-Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
- GET /.well-known/appspecific/com.chrome.devtools.json 404 in 939ms
 'use client';
 
 import { useState, useCallback } from 'react';
@@ -247,7 +210,7 @@ export default function ImageEditingPanel({
 
       <div className="space-y-4">
         <div>
-          <label htmlFor="uploadImagesInput" className="block text-sm font-medium mb-2">
+          <label htmlFor="upload-images" className="block text-sm font-medium mb-2">
             Upload Images *
           </label>
           <div
@@ -257,7 +220,7 @@ export default function ImageEditingPanel({
               isDragActive ? "border-primary bg-primary/5" : "border-gray-300 hover:border-gray-400"
             )}
           >
-            <input {...getInputProps()} id="uploadImagesInput" name="uploadImagesInput" />
+            <input id="upload-images" name="upload-images" {...getInputProps()} />
             <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
             <p className="text-sm text-gray-600">
               {isDragActive ? 'Drop images here...' : 'Drag & drop images here, or click to select'}
@@ -292,12 +255,12 @@ export default function ImageEditingPanel({
         )}
 
         <div>
-          <label htmlFor="editPrompt" className="block text-sm font-medium mb-2">
+          <label htmlFor="edit-prompt" className="block text-sm font-medium mb-2">
             Edit Prompt *
           </label>
           <textarea
-            id="editPrompt"
-            name="editPrompt"
+            id="edit-prompt"
+            name="edit-prompt"
             value={editPrompt}
             onChange={(e) => setEditPrompt(e.target.value)}
             placeholder="Describe how you want to edit the image..."
@@ -309,11 +272,11 @@ export default function ImageEditingPanel({
         <div>
           <label className="block text-sm font-medium mb-2">Input Fidelity</label>
           <div className="space-y-2">
-            <label className="flex items-center gap-2" htmlFor="inputFidelityLow">
+            <label className="flex items-center gap-2" htmlFor="input-fidelity-low">
               <input
+                id="input-fidelity-low"
+                name="input-fidelity"
                 type="radio"
-                id="inputFidelityLow"
-                name="inputFidelity"
                 value="low"
                 checked={inputFidelity === 'low'}
                 onChange={(e) => setInputFidelity(e.target.value as 'low' | 'high')}
@@ -321,11 +284,11 @@ export default function ImageEditingPanel({
               />
               <span className="text-sm">Low Fidelity - Faster processing, general editing</span>
             </label>
-            <label className="flex items-center gap-2" htmlFor="inputFidelityHigh">
+            <label className="flex items-center gap-2" htmlFor="input-fidelity-high">
               <input
+                id="input-fidelity-high"
+                name="input-fidelity"
                 type="radio"
-                id="inputFidelityHigh"
-                name="inputFidelity"
                 value="high"
                 checked={inputFidelity === 'high'}
                 onChange={(e) => setInputFidelity(e.target.value as 'low' | 'high')}
@@ -337,7 +300,7 @@ export default function ImageEditingPanel({
         </div>
 
         <div>
-          <label htmlFor="maskImageInput" className="block text-sm font-medium mb-2">
+          <label htmlFor="mask-image" className="block text-sm font-medium mb-2">
             Mask Image (Optional)
           </label>
           <div
@@ -347,7 +310,7 @@ export default function ImageEditingPanel({
               isMaskDragActive ? "border-primary bg-primary/5" : "border-gray-300 hover:border-gray-400"
             )}
           >
-            <input {...getMaskInputProps()} id="maskImageInput" name="maskImageInput" />
+            <input id="mask-image" name="mask-image" {...getMaskInputProps()} />
             <ImageIcon className="w-6 h-6 mx-auto mb-2 text-gray-400" />
             <p className="text-sm text-gray-600">
               {isMaskDragActive ? 'Drop mask here...' : 'Upload mask for inpainting'}
