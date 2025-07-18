@@ -6,9 +6,6 @@ const nextConfig = {
     domains: ['api.openai.com'],
     unoptimized: true,
   },
-  experimental: {
-    serverActions: true,
-  },
 }
 
 module.exports = nextConfig

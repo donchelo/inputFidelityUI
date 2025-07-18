@@ -14,6 +14,14 @@ interface ImageEditingPanelProps {
   onProgressUpdate: (progress: ProgressState) => void;
 }
 
+// Helper para logs solo en desarrollo
+function devLog(...args: any[]) {
+  if (process.env.NODE_ENV === 'development') {
+    // eslint-disable-next-line no-console
+    console.log('[DEV LOG]', ...args);
+  }
+}
+
 export default function ImageEditingPanel({ 
   onImageEdited, 
   onProgressUpdate 
@@ -110,12 +118,12 @@ export default function ImageEditingPanel({
 
   const handleEdit = async () => {
     if (uploadedImages.length === 0) {
-      toast.error('Please upload at least one image');
+      toast.error('Por favor, sube al menos una imagen');
       return;
     }
 
     if (!editPrompt.trim()) {
-      toast.error('Please enter an edit prompt');
+      toast.error('Por favor, ingresa un prompt de edición');
       return;
     }
 
@@ -138,11 +146,22 @@ export default function ImageEditingPanel({
         output_format: 'png',
       };
 
+      devLog('Enviando petición de edición', params);
       const response = await imageService.editImage(params);
+      devLog('Respuesta de edición', response);
 
       if (response.success && response.data) {
-        onImageEdited(response.data);
-        toast.success('Image edited successfully!');
+        // Validar que la imagen tenga url o base64 válido
+        const imagenes = Array.isArray(response.data) ? response.data : [response.data];
+        const imagenesValidas = imagenes.filter(img => (img.url && img.url !== '') || (img.base64 && img.base64 !== 'undefined' && img.base64 !== ''));
+        if (imagenesValidas.length === 0) {
+          devLog('La respuesta no contiene imágenes válidas', response.data);
+          toast.error('La API respondió pero la imagen no es válida o no se pudo procesar. Intenta con otra imagen o prompt.');
+          onImageEdited([]);
+        } else {
+          onImageEdited(imagenesValidas);
+          toast.success('¡Imagen editada exitosamente!');
+        }
       } else {
         // Manejo de errores mejorado
         if (response.errorObj) {
@@ -164,8 +183,11 @@ export default function ImageEditingPanel({
         } else {
           toast.error(response.error || 'No se pudo editar la imagen. Intenta con otra imagen o prompt.');
         }
+        devLog('Error en la respuesta de edición', response);
       }
     } catch (error) {
+      devLog('Error inesperado en edición', error);
+      // eslint-disable-next-line no-console
       console.error('Edit error:', error);
       toast.error('Ocurrió un error inesperado al editar la imagen.');
     } finally {

@@ -24,6 +24,14 @@ interface ResultsPanelProps {
   onImageSelect?: (image: GeneratedImage) => void;
 }
 
+// Helper para logs solo en desarrollo
+function devLog(...args: any[]) {
+  if (process.env.NODE_ENV === 'development') {
+    // eslint-disable-next-line no-console
+    console.log('[DEV LOG]', ...args);
+  }
+}
+
 export default function ResultsPanel({ images, progress, onImageSelect }: ResultsPanelProps) {
   const [selectedImage, setSelectedImage] = useState<GeneratedImage | null>(null);
   const [zoomLevel, setZoomLevel] = useState(1);
@@ -61,6 +69,13 @@ export default function ResultsPanel({ images, progress, onImageSelect }: Result
   };
 
   const openImageModal = (image: GeneratedImage) => {
+    const hasValidUrl = Boolean(image.url && image.url !== '');
+    const hasValidBase64 = Boolean(image.base64 && image.base64 !== 'undefined' && image.base64 !== '');
+    if (!hasValidUrl && !hasValidBase64) {
+      devLog('Intento de abrir imagen no válida', image);
+      toast.error('No se puede mostrar la imagen porque no es válida o está corrupta.');
+      return;
+    }
     setSelectedImage(image);
     setZoomLevel(1);
   };
@@ -146,6 +161,9 @@ export default function ResultsPanel({ images, progress, onImageSelect }: Result
           {images.map((image) => {
             const hasValidUrl = Boolean(image.url && image.url !== '');
             const hasValidBase64 = Boolean(image.base64 && image.base64 !== 'undefined' && image.base64 !== '');
+            if (!hasValidUrl && !hasValidBase64) {
+              devLog('Imagen no válida en galería', image);
+            }
             return (
               <div key={image.id} className="bg-white rounded-lg border shadow-sm overflow-hidden">
                 <div className="relative group">
