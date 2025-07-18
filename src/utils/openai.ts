@@ -92,77 +92,117 @@ export class OpenAIImageService {
 
   async editImage(params: ImageEditingParams): Promise<ApiResponse & { errorObj?: EditImageError }> {
     try {
-      const formData = new FormData();
+      // Si la imagen es un archivo local, primero súbela y obtén el file_id
+      let imageContent: any = null;
       if (params.image instanceof File) {
-        formData.append('image', params.image);
-      } else if (Array.isArray(params.image)) {
-        params.image.forEach((file, index) => {
-          formData.append(`image_${index}`, file);
+        const formData = new FormData();
+        formData.append('file', params.image);
+        formData.append('purpose', 'vision');
+        // Subir el archivo y obtener el file_id
+        const uploadResponse = await fetch('https://api.openai.com/v1/files', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENAI_API_KEY}`
+          },
+          body: formData
         });
-      }
-      if (params.mask) {
-        formData.append('mask', params.mask);
-      }
-      formData.append('prompt', params.prompt);
-      formData.append('model', params.model);
-      formData.append('input_fidelity', params.input_fidelity);
-      if (params.size) formData.append('size', params.size);
-      if (params.quality) formData.append('quality', params.quality);
-      if (params.output_format) formData.append('output_format', params.output_format);
-      let response;
-      try {
-        response = await this.client.images.edit({
-          image: params.image as File,
-          prompt: params.prompt,
-          model: params.model as any,
-          n: 1,
-          size: params.size as any,
+        const uploadData = await uploadResponse.json();
+        if (!uploadData.id) {
+          return {
+            success: false,
+            error: 'No se pudo subir la imagen a OpenAI',
+            errorObj: {
+              type: EditImageErrorType.API,
+              message: 'No se pudo subir la imagen a OpenAI',
+              details: uploadData
+            }
+          };
+        }
+        imageContent = { type: 'input_image', image_file: uploadData.id, detail: params.input_fidelity };
+      } else if (typeof params.image === 'string') {
+        // Si es una URL
+        imageContent = { type: 'input_image', image_url: params.image, detail: params.input_fidelity };
+      } else if (Array.isArray(params.image) && params.image[0] instanceof File) {
+        // Solo tomamos la primera imagen para este flujo
+        const formData = new FormData();
+        formData.append('file', params.image[0]);
+        formData.append('purpose', 'vision');
+        const uploadResponse = await fetch('https://api.openai.com/v1/files', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENAI_API_KEY}`
+          },
+          body: formData
         });
-      } catch (apiError: any) {
-        // Error de la API
+        const uploadData = await uploadResponse.json();
+        if (!uploadData.id) {
+          return {
+            success: false,
+            error: 'No se pudo subir la imagen a OpenAI',
+            errorObj: {
+              type: EditImageErrorType.API,
+              message: 'No se pudo subir la imagen a OpenAI',
+              details: uploadData
+            }
+          };
+        }
+        imageContent = { type: 'input_image', image_file: uploadData.id, detail: params.input_fidelity };
+      } else {
         return {
           success: false,
-          error: 'Error de la API de OpenAI',
-          errorObj: {
-            type: EditImageErrorType.API,
-            message: apiError?.message || 'Error desconocido de la API',
-            details: apiError,
-          },
+          error: 'Tipo de imagen no soportado para edición con gpt-image-1',
         };
       }
-      if (!response || !response.data) {
-        return {
-          success: false,
-          error: 'Respuesta inválida de la API',
-          errorObj: {
-            type: EditImageErrorType.API,
-            message: 'Respuesta inválida de la API',
-          },
-        };
-      }
-      return {
-        success: true,
-        data: response.data.map((item, index) => ({
-          id: `edit_${Date.now()}_${index}`,
-          url: item.url || '',
-          base64: item.base64 || '', // <-- AÑADIDO
-          metadata: {
-            revised_prompt: item.revised_prompt,
-            generation_time: Date.now(),
-            model_used: params.model,
-          },
-        })),
+
+      // Construir el request para Responses API
+      const requestBody = {
+        model: 'gpt-image-1',
+        input: [
+          {
+            role: 'user',
+            content: [
+              { type: 'input_text', text: params.prompt },
+              imageContent
+            ]
+          }
+        ]
       };
-    } catch (error: any) {
-      // Error de red u otro desconocido
+
+      const response = await fetch('https://api.openai.com/v1/responses', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENAI_API_KEY}`
+        },
+        body: JSON.stringify(requestBody)
+      });
+      const data = await response.json();
+
+      // Procesar la respuesta para extraer la imagen generada
+      let imageBase64 = null;
+      if (data && data.output && Array.isArray(data.output)) {
+        const imgResult = data.output.find((o: any) => o.type === 'image_generation_call');
+        if (imgResult && imgResult.result) {
+          imageBase64 = imgResult.result;
+        }
+      }
+
+      if (imageBase64) {
+        return {
+          success: true,
+          data: [{ base64: imageBase64, url: '', id: `img_${Date.now()}`, metadata: {} }]
+        };
+      } else {
+        return {
+          success: false,
+          error: 'La API respondió pero la imagen no es válida o no se pudo procesar.'
+        };
+      }
+    } catch (error) {
+      console.error('Image editing error:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Error desconocido',
-        errorObj: {
-          type: error?.isAxiosError ? EditImageErrorType.Network : EditImageErrorType.Unknown,
-          message: error?.message || 'Error desconocido',
-          details: error,
-        },
+        error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
   }

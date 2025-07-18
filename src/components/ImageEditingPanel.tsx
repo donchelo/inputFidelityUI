@@ -32,14 +32,42 @@ export default function ImageEditingPanel({
   const [inputFidelity, setInputFidelity] = useState<'low' | 'high'>('high');
   const [isEditing, setIsEditing] = useState(false);
 
+  const validarImagen = (file: File): string | null => {
+    const formatosPermitidos = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif'];
+    const maxSizeMB = 50;
+
+    // Log de información
+    console.log(`Nombre: ${file.name}, Tamaño: ${(file.size / 1024 / 1024).toFixed(2)} MB, Tipo: ${file.type}`);
+
+    // 1. Formato
+    if (!formatosPermitidos.includes(file.type)) {
+      return 'Formato de imagen no soportado. Usa PNG, JPEG, WEBP o GIF.';
+    }
+
+    // 2. Tamaño
+    if (file.size > maxSizeMB * 1024 * 1024) {
+      return 'La imagen supera el tamaño máximo de 50 MB.';
+    }
+
+    // 3. GIF animado (opcional, requiere más lógica para detectar animación)
+    // Si quieres agregar lógica para GIF animado, aquí puedes hacerlo
+
+    return null; // Todo OK
+  };
+
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const validFiles = acceptedFiles.filter(file => {
+      const error = validarImagen(file);
+      if (error) {
+        toast.error(error);
+        return false;
+      }
       if (!isValidImageFormat(file)) {
-        toast.error(`${file.name} is not a supported image format`);
+        toast.error(`${file.name} no es un formato de imagen soportado`);
         return false;
       }
       if (file.size > 50 * 1024 * 1024) {
-        toast.error(`${file.name} is too large (max 50MB)`);
+        toast.error(`${file.name} es demasiado grande (máx 50MB)`);
         return false;
       }
       return true;
@@ -55,7 +83,7 @@ export default function ImageEditingPanel({
         };
         setUploadedImages(prev => [...prev, newImage]);
       } catch (error) {
-        toast.error(`Failed to process ${file.name}`);
+        toast.error(`No se pudo procesar ${file.name}`);
       }
     });
   }, []);
