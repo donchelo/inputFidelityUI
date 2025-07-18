@@ -1,12 +1,3 @@
-export interface ImageGenerationParams {
-  model: string;
-  input: string;
-  size: 'auto' | '1024x1024' | '1536x1024' | '1024x1536';
-  quality: 'auto' | 'low' | 'medium' | 'high';
-  output_format: 'png' | 'jpeg' | 'webp';
-  background: 'opaque' | 'transparent';
-  partial_images: number;
-}
 
 export interface ImageEditingParams {
   model: string;
@@ -57,7 +48,7 @@ export interface UseCase {
   description: string;
   examples: string[];
   bestPractices: string[];
-  recommendedSettings: Partial<ImageGenerationParams & ImageEditingParams>;
+  recommendedSettings: Partial<ImageEditingParams>;
 }
 
 export interface TokenCost {

@@ -1,6 +1,5 @@
 import OpenAI from 'openai';
-import { ImageGenerationParams, ImageEditingParams, ApiResponse } from '@/types';
-import { convertToRGBA } from './helpers';
+import { ImageEditingParams, ApiResponse } from '@/types';
 
 const openai = new OpenAI({
   apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
@@ -38,13 +37,13 @@ export class OpenAIImageService {
 
   async editImage(params: ImageEditingParams): Promise<ApiResponse & { errorObj?: EditImageError }> {
     try {
-      // Usar la API directa de OpenAI para edición
-      let originalFile: File;
+      // Preparar la imagen para gpt-image-1
+      let imageInput: File | File[];
       
       if (params.image instanceof File) {
-        originalFile = params.image;
-      } else if (Array.isArray(params.image) && params.image[0] instanceof File) {
-        originalFile = params.image[0];
+        imageInput = params.image;
+      } else if (Array.isArray(params.image)) {
+        imageInput = params.image;
       } else {
         return {
           success: false,
@@ -56,29 +55,15 @@ export class OpenAIImageService {
         };
       }
 
-      // Convert image to RGBA format (required by OpenAI API)
-      let imageFile: File;
-      try {
-        imageFile = await convertToRGBA(originalFile);
-      } catch (conversionError) {
-        return {
-          success: false,
-          error: 'Error al convertir la imagen al formato requerido',
-          errorObj: {
-            type: EditImageErrorType.Validation,
-            message: 'No se pudo convertir la imagen al formato RGBA requerido por OpenAI',
-            details: conversionError
-          }
-        };
-      }
-
-      // Usar la API de OpenAI para edición de imágenes
+      // Usar la API de OpenAI images.edit con gpt-image-1
       const response = await this.client.images.edit({
-        image: imageFile,
+        model: "gpt-image-1",
+        image: imageInput,
         prompt: params.prompt,
-        n: 1,
-        size: '1024x1024',
-        response_format: 'url',
+        input_fidelity: params.input_fidelity,
+        quality: params.quality || "high",
+        output_format: params.output_format || "jpeg",
+        size: params.size || "1024x1024"
       });
 
       return {
@@ -86,14 +71,15 @@ export class OpenAIImageService {
         data: response.data.map((item, index) => ({
           id: `edit_${Date.now()}_${index}`,
           url: item.url || '',
-          base64: '',
+          base64: item.b64_json || '',
           metadata: {
             revised_prompt: item.revised_prompt,
             generation_time: Date.now(),
-            model_used: params.model,
+            model_used: 'gpt-image-1',
           },
         })),
       };
+
     } catch (error: any) {
       console.error('Image editing error:', error);
       
@@ -129,59 +115,6 @@ export class OpenAIImageService {
     }
   }
 
-  async generateImage(params: ImageGenerationParams): Promise<ApiResponse> {
-    try {
-      // Usar la API de OpenAI para generación de imágenes
-      const response = await this.client.images.generate({
-        prompt: params.input,
-        n: 1,
-        size: params.size === 'auto' ? '1024x1024' : params.size,
-        response_format: 'url',
-      });
-
-      return {
-        success: true,
-        data: response.data.map((item, index) => ({
-          id: `gen_${Date.now()}_${index}`,
-          url: item.url || '',
-          base64: '',
-          metadata: {
-            revised_prompt: item.revised_prompt,
-            generation_time: Date.now(),
-            model_used: 'dall-e-3',
-          },
-        })),
-      };
-    } catch (error: any) {
-      console.error('Image generation error:', error);
-      
-      let errorMessage = 'Error desconocido';
-      
-      if (error?.status === 400) {
-        errorMessage = 'Error de validación en el prompt';
-      } else if (error?.status === 401) {
-        errorMessage = 'API Key de OpenAI inválida o no configurada';
-      } else if (error?.status === 429) {
-        errorMessage = 'Límite de rate de la API alcanzado';
-      } else if (error?.status === 500) {
-        errorMessage = 'Error interno del servidor de OpenAI';
-      }
-
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : errorMessage,
-      };
-    }
-  }
-
-  async streamGeneration(
-    params: ImageGenerationParams,
-    onPartialImage: (image: string, index: number) => void
-  ): Promise<ApiResponse> {
-    // Para simplificar, usamos la generación normal sin streaming
-    // ya que la API de OpenAI no soporta streaming nativo para imágenes
-    return this.generateImage(params);
-  }
 }
 
 export const imageService = OpenAIImageService.getInstance();

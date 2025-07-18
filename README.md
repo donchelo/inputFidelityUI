@@ -1,18 +1,10 @@
-# OpenAI Image Studio
+# GPT Image-1 Editor
 
-A comprehensive UI for generating and editing images using OpenAI's GPT Image 1 model with high input fidelity capabilities.
+A specialized interface for editing images using OpenAI's GPT Image-1 model with high input fidelity capabilities.
 
 ## Features
 
-### 🎨 Image Generation
-- **Text-to-Image**: Generate images from detailed text prompts
-- **Quality Control**: Choose from low, medium, high, or auto quality settings
-- **Size Options**: Support for square, landscape, and portrait formats
-- **Format Support**: PNG, JPEG, and WebP output formats
-- **Transparent Backgrounds**: Option for transparent backgrounds (PNG/WebP only)
-- **Streaming**: Real-time partial image previews during generation
-
-### ✨ Image Editing
+### ✨ High Fidelity Image Editing
 - **High Input Fidelity**: Preserve faces, logos, and fine details
 - **Multi-Image Support**: Edit multiple images simultaneously
 - **Inpainting**: Use mask images for precise area editing
@@ -20,12 +12,12 @@ A comprehensive UI for generating and editing images using OpenAI's GPT Image 1 
 - **Batch Processing**: Edit multiple images with the same prompt
 
 ### 🖼️ Results Management
-- **Image Gallery**: Clean, organized display of generated images
+- **Image Gallery**: Clean, organized display of edited images
 - **Zoom & Preview**: Full-screen image viewing with zoom controls
-- **Download**: Save images in various formats
+- **Download**: Save edited images in various formats
 - **Share**: Built-in sharing capabilities
 - **Copy URLs**: Easy URL copying for sharing
-- **Metadata Display**: View generation details and token usage
+- **Metadata Display**: View editing details and token usage
 
 ## Technical Specifications
 
@@ -36,9 +28,9 @@ A comprehensive UI for generating and editing images using OpenAI's GPT Image 1 
 - **Max Images**: 500 per request
 
 ### API Integration
-- **Model**: GPT Image 1
-- **Endpoints**: Both Responses API and Images API
-- **Streaming**: Real-time generation updates
+- **Model**: GPT Image-1
+- **Endpoint**: OpenAI Images API with editing capabilities
+- **High Fidelity**: Preserves distinctive features with high accuracy
 - **Error Handling**: Comprehensive error management
 
 ## Getting Started
@@ -78,17 +70,6 @@ npm run dev
 6. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Usage
-
-### Image Generation
-1. Navigate to the "Generate" tab
-2. Enter a detailed text prompt
-3. Choose your preferred settings:
-   - Size (auto, square, landscape, portrait)
-   - Quality (auto, low, medium, high)
-   - Output format (PNG, JPEG, WebP)
-   - Background (opaque, transparent)
-   - Streaming options
-4. Click "Generate" or "Stream" for real-time updates
 
 ### Image Editing
 1. Navigate to the "Edit" tab
