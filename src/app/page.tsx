@@ -32,11 +32,11 @@ export default function Home() {
           <Box display="flex" alignItems="center" justifyContent="center" gap={1} mb={1}>
             <PaletteIcon sx={{ fontSize: 32, color: 'primary.main' }} />
             <Typography variant="h5" fontWeight={600} color="text.primary">
-              GPT Image-1 Editor
+              Editor de Imágenes IA
             </Typography>
           </Box>
           <Typography variant="body2" color="text.secondary" maxWidth={400} mx="auto">
-            Edita imágenes con alta fidelidad usando el modelo GPT Image-1 de OpenAI
+            Edita imágenes fácilmente usando inteligencia artificial avanzada
           </Typography>
         </Box>
         <Grid container spacing={2}>
@@ -56,10 +56,7 @@ export default function Home() {
         <Divider sx={{ my: 3 }} />
         <Box component="footer" textAlign="center" color="text.secondary" fontSize={12}>
           <Typography>
-            Powered by OpenAI GPT Image-1
-          </Typography>
-          <Typography mt={0.5}>
-            Built with Next.js, React y MUI
+            Powered by AI4U
           </Typography>
         </Box>
       </Container>
