@@ -1,0 +1,108 @@
+/* Red Hat Display */
+@font-face {
+  font-family: 'Red_Hat_Display';
+  src: url('/fonts/Red_Hat_Display/RedHatDisplay-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Red_Hat_Display';
+  src: url('/fonts/Red_Hat_Display/RedHatDisplay-BlackItalic.ttf') format('truetype');
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Red_Hat_Display';
+  src: url('/fonts/Red_Hat_Display/RedHatDisplay-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Red_Hat_Display';
+  src: url('/fonts/Red_Hat_Display/RedHatDisplay-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Red_Hat_Display';
+  src: url('/fonts/Red_Hat_Display/RedHatDisplay-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Red_Hat_Display';
+  src: url('/fonts/Red_Hat_Display/RedHatDisplay-ExtraBoldItalic.ttf') format('truetype');
+  font-weight: 800;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Red_Hat_Display';
+  src: url('/fonts/Red_Hat_Display/RedHatDisplay-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Red_Hat_Display';
+  src: url('/fonts/Red_Hat_Display/RedHatDisplay-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Red_Hat_Display';
+  src: url('/fonts/Red_Hat_Display/RedHatDisplay-LightItalic.ttf') format('truetype');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Red_Hat_Display';
+  src: url('/fonts/Red_Hat_Display/RedHatDisplay-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Red_Hat_Display';
+  src: url('/fonts/Red_Hat_Display/RedHatDisplay-MediumItalic.ttf') format('truetype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Red_Hat_Display';
+  src: url('/fonts/Red_Hat_Display/RedHatDisplay-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Red_Hat_Display';
+  src: url('/fonts/Red_Hat_Display/RedHatDisplay-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Red_Hat_Display';
+  src: url('/fonts/Red_Hat_Display/RedHatDisplay-SemiBoldItalic.ttf') format('truetype');
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* CLT Necto Mono */
+@font-face {
+  font-family: 'CLT Necto Mono';
+  src: url('/fonts/CLT Necto Mono/NectoMono-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+} 
