@@ -4,8 +4,8 @@ import { Inter } from 'next/font/google';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'GPT Image-1 Editor',
-  description: 'Edit images with high input fidelity using OpenAI\'s GPT Image-1 model',
+  title: 'AI4U Image Editor',
+  description: 'Edita imágenes fácilmente usando inteligencia artificial avanzada',
 };
 
 export default function RootLayout({
