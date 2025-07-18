@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Paper, TextField, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Typography, Button, CircularProgress } from '@mui/material';
+import { Box, Paper, TextField, Typography, Button, CircularProgress, Popover, List, ListItemButton, ListItemText } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 
@@ -24,6 +24,20 @@ const BottomPromptPanel: React.FC<BottomPromptPanelProps> = ({
   uploadedImages,
   estimatedTokens,
 }) => {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const fidelityLabel = inputFidelity === 'high' ? 'Alta' : 'Baja';
+
+  const handleFidelityClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleFidelityClose = () => {
+    setAnchorEl(null);
+  };
+  const handleFidelitySelect = (value: 'low' | 'high') => {
+    setInputFidelity(value);
+    setAnchorEl(null);
+  };
+
   return (
     <Box position="fixed" bottom={0} left={0} width="100%" zIndex={1300} sx={{ pointerEvents: 'none' }}>
       <Paper
@@ -56,19 +70,41 @@ const BottomPromptPanel: React.FC<BottomPromptPanelProps> = ({
           size="small"
           sx={{ flex: 2 }}
         />
-        <FormControl component="fieldset" size="small" sx={{ minWidth: 120 }}>
-          <FormLabel component="legend" sx={{ fontSize: 13 }}>Fidelidad</FormLabel>
-          <RadioGroup
-            row
-            value={inputFidelity}
-            onChange={e => setInputFidelity(e.target.value as 'low' | 'high')}
-            sx={{ gap: 1 }}
-          >
-            <FormControlLabel value="low" control={<Radio size="small" color="primary" />} label={<Typography fontSize={12}>Baja</Typography>} />
-            <FormControlLabel value="high" control={<Radio size="small" color="primary" />} label={<Typography fontSize={12}>Alta</Typography>} />
-          </RadioGroup>
-        </FormControl>
         <Box display="flex" flexDirection="column" alignItems="flex-end" gap={0.5} minWidth={120}>
+          <Typography variant="caption" sx={{ fontSize: 13, mb: 0.5, color: 'text.secondary' }}>Fidelidad</Typography>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={handleFidelityClick}
+            sx={{ textTransform: 'none', fontWeight: 500, borderRadius: 2, minWidth: 90 }}
+            aria-describedby="fidelity-popover"
+          >
+            {fidelityLabel}
+          </Button>
+          <Popover
+            id="fidelity-popover"
+            open={Boolean(anchorEl)}
+            anchorEl={anchorEl}
+            onClose={handleFidelityClose}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+            transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+            PaperProps={{ sx: { minWidth: 120, p: 0 } }}
+          >
+            <List dense disablePadding>
+              <ListItemButton
+                selected={inputFidelity === 'low'}
+                onClick={() => handleFidelitySelect('low')}
+              >
+                <ListItemText primary={<Typography fontSize={14}>Baja</Typography>} />
+              </ListItemButton>
+              <ListItemButton
+                selected={inputFidelity === 'high'}
+                onClick={() => handleFidelitySelect('high')}
+              >
+                <ListItemText primary={<Typography fontSize={14}>Alta</Typography>} />
+              </ListItemButton>
+            </List>
+          </Popover>
           <Button
             onClick={handleEdit}
             disabled={isEditing || uploadedImages.length === 0 || !editPrompt.trim()}
@@ -85,6 +121,7 @@ const BottomPromptPanel: React.FC<BottomPromptPanelProps> = ({
               alignItems: 'center',
               justifyContent: 'center',
               boxShadow: 3,
+              mt: 1
             }}
           >
             {isEditing ? (
