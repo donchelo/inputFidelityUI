@@ -7,6 +7,7 @@ import ImageEditingPanel from '@/components/ImageEditingPanel';
 import ResultsPanel from '@/components/ResultsPanel';
 import { Box, Container, Typography, Grid, Paper, Divider } from '@mui/material';
 import PaletteIcon from '@mui/icons-material/Palette';
+import Image from 'next/image';
 
 export default function Home() {
   const [editedImages, setEditedImages] = useState<GeneratedImage[]>([]);
@@ -30,7 +31,7 @@ export default function Home() {
       <Container maxWidth="md" sx={{ py: 3 }}>
         <Box textAlign="center" mb={3}>
           <Box display="flex" alignItems="center" justifyContent="center" gap={1} mb={1}>
-            <PaletteIcon sx={{ fontSize: 32, color: 'primary.main' }} />
+            <Image src="/ai4u-logo.png" alt="AI4U Logo" width={80} height={32} style={{ borderRadius: 4, objectFit: 'contain' }} />
             <Typography variant="h5" fontWeight={600} color="text.primary">
               Editor de Imágenes IA
             </Typography>
@@ -54,7 +55,8 @@ export default function Home() {
           </Grid>
         </Grid>
         <Divider sx={{ my: 3 }} />
-        <Box component="footer" textAlign="center" color="text.secondary" fontSize={12}>
+        <Box component="footer" textAlign="center" color="text.secondary" fontSize={12} display="flex" alignItems="center" justifyContent="center" gap={1}>
+          <Image src="/ai4u-isotipo.png" alt="AI4U Isotipo" width={20} height={20} style={{ borderRadius: 4, objectFit: 'contain' }} />
           <Typography>
             Powered by AI4U
           </Typography>
