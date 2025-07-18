@@ -29,7 +29,7 @@ export default function ResultsPanel({ images, progress }: ResultsPanelProps) {
   };
 
   return (
-    <Paper elevation={1} sx={{ p: 2, borderRadius: 2 }}>
+    <Paper elevation={1} sx={{ p: 2.5, borderRadius: 3, bgcolor: 'grey.50', boxShadow: 1, minHeight: 340 }}>
       <Box display="flex" alignItems="center" justifyContent="space-between" mb={1}>
         <Box display="flex" alignItems="center" gap={1}>
           <ImageIcon color="primary" fontSize="small" />
@@ -70,11 +70,11 @@ export default function ResultsPanel({ images, progress }: ResultsPanelProps) {
                       component="img"
                       src={image.url || `data:image/png;base64,${image.base64}`}
                       alt="Edited image"
-                      sx={{ width: '100%', height: 100, objectFit: 'cover', cursor: 'pointer' }}
+                      sx={{ width: '100%', height: 200, objectFit: 'contain', cursor: 'pointer' }}
                       onClick={() => setSelectedImage(image)}
                     />
                   ) : (
-                    <Box width="100%" height={100} display="flex" alignItems="center" justifyContent="center" bgcolor="grey.100">
+                    <Box width="100%" height={200} display="flex" alignItems="center" justifyContent="center" bgcolor="grey.100">
                       <Typography variant="caption" color="text.disabled">Imagen no disponible</Typography>
                     </Box>
                   )}

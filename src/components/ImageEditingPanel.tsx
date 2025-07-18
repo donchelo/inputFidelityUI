@@ -11,6 +11,7 @@ import { Box, Typography, Button, TextField, Radio, RadioGroup, FormControl, For
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import BottomPromptPanel from './BottomPromptPanel';
 
 interface ImageEditingPanelProps {
   onImageEdited: (images: any[]) => void;
@@ -131,12 +132,12 @@ export default function ImageEditingPanel({
   const estimatedTokens = calculateTokenCost('high', '1024x1024', inputFidelity);
 
   return (
-    <Paper elevation={1} sx={{ p: 2, borderRadius: 2 }}>
-      <Box display="flex" alignItems="center" gap={1} mb={1}>
-        <EditIcon color="primary" fontSize="small" />
-        <Typography variant="subtitle1" fontWeight={600}>Edición de Imagen</Typography>
-      </Box>
-      <Box component="form" noValidate autoComplete="off">
+    <Box position="relative">
+      <Paper elevation={1} sx={{ p: 2.5, borderRadius: 3, bgcolor: 'grey.50', boxShadow: 1, minHeight: 340 }}>
+        <Box display="flex" alignItems="center" gap={1} mb={1}>
+          <EditIcon color="primary" fontSize="small" />
+          <Typography variant="subtitle1" fontWeight={600}>Edición de Imagen</Typography>
+        </Box>
         <Grid container spacing={1}>
           <Grid item xs={12}>
             <FormLabel component="legend" sx={{ mb: 0.5, fontSize: 13 }}>Imagen *</FormLabel>
@@ -144,18 +145,15 @@ export default function ImageEditingPanel({
               <Box
                 {...getRootProps()}
                 sx={{
-                  border: '1.5px dashed',
-                  borderColor: isDragActive ? 'primary.main' : 'grey.400',
-                  bgcolor: isDragActive ? 'primary.lighter' : 'background.paper',
-                  borderRadius: 2,
-                  p: 2,
-                  textAlign: 'center',
-                  cursor: 'pointer',
-                  minHeight: 120,
+                  minHeight: 200,
+                  p: 0,
                   display: 'flex',
-                  flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  bgcolor: 'background.paper',
+                  borderRadius: 2,
+                  border: '1.5px dashed',
+                  borderColor: 'grey.300',
                 }}
               >
                 <input {...getInputProps()} />
@@ -175,7 +173,7 @@ export default function ImageEditingPanel({
                   borderColor: 'primary.main',
                   borderRadius: 2,
                   p: 0,
-                  minHeight: 120,
+                  minHeight: 220,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -187,7 +185,7 @@ export default function ImageEditingPanel({
                   component="img"
                   src={uploadedImages[0].preview}
                   alt="Preview de la imagen subida"
-                  sx={{ width: '100%', height: 120, objectFit: 'contain', borderRadius: 2 }}
+                  sx={{ width: '100%', height: 200, objectFit: 'contain', borderRadius: 2 }}
                 />
                 <IconButton
                   size="small"
@@ -232,54 +230,18 @@ export default function ImageEditingPanel({
               </Grid>
             </Grid>
           )}
-          <Grid item xs={12}>
-            <FormLabel component="legend" sx={{ mb: 0.5, fontSize: 13 }}>Prompt *</FormLabel>
-            <TextField
-              value={editPrompt}
-              onChange={(e) => setEditPrompt(e.target.value)}
-              placeholder="Describe cómo quieres editar la imagen..."
-              multiline
-              minRows={2}
-              maxRows={4}
-              fullWidth
-              required
-              variant="outlined"
-              size="small"
-              sx={{ mt: 0, mb: 1 }}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <FormControl component="fieldset" size="small" sx={{ width: '100%' }}>
-              <FormLabel component="legend" sx={{ fontSize: 13 }}>Fidelidad</FormLabel>
-              <RadioGroup
-                row
-                value={inputFidelity}
-                onChange={(e) => setInputFidelity(e.target.value as 'low' | 'high')}
-                sx={{ gap: 1 }}
-              >
-                <FormControlLabel value="low" control={<Radio size="small" color="primary" />} label={<Typography fontSize={12}>Baja</Typography>} />
-                <FormControlLabel value="high" control={<Radio size="small" color="primary" />} label={<Typography fontSize={12}>Alta</Typography>} />
-              </RadioGroup>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} display="flex" alignItems="center" justifyContent="space-between" borderTop={1} borderColor="grey.200" pt={1}>
-            <Typography variant="caption" color="text.secondary">
-              Tokens estimados: {estimatedTokens.toLocaleString()}
-            </Typography>
-            <Button
-              onClick={handleEdit}
-              disabled={isEditing || uploadedImages.length === 0 || !editPrompt.trim()}
-              variant="contained"
-              color="primary"
-              size="small"
-              startIcon={isEditing ? <CircularProgress size={14} color="inherit" /> : <EditIcon fontSize="small" />}
-              sx={{ minWidth: 100 }}
-            >
-              {isEditing ? 'Editando...' : 'Editar'}
-            </Button>
-          </Grid>
         </Grid>
-      </Box>
-    </Paper>
+      </Paper>
+      <BottomPromptPanel
+        editPrompt={editPrompt}
+        setEditPrompt={setEditPrompt}
+        inputFidelity={inputFidelity}
+        setInputFidelity={setInputFidelity}
+        isEditing={isEditing}
+        handleEdit={handleEdit}
+        uploadedImages={uploadedImages}
+        estimatedTokens={estimatedTokens}
+      />
+    </Box>
   );
 }
