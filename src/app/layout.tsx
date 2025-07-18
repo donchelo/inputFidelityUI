@@ -9,8 +9,6 @@ export const metadata: Metadata = {
   description: 'A comprehensive UI for generating and editing images using OpenAI\'s GPT Image 1 model with high input fidelity capabilities',
   keywords: ['OpenAI', 'Image Generation', 'Image Editing', 'GPT Image 1', 'High Fidelity', 'AI', 'React', 'Next.js'],
   authors: [{ name: 'OpenAI Image Studio' }],
-  viewport: 'width=device-width, initial-scale=1',
-  themeColor: '#3b82f6',
   robots: 'index, follow',
   openGraph: {
     title: 'OpenAI Image Studio',
@@ -23,6 +21,12 @@ export const metadata: Metadata = {
     title: 'OpenAI Image Studio',
     description: 'Generate and edit images with high input fidelity using OpenAI\'s GPT Image 1 model',
   },
+};
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#3b82f6',
 };
 
 export default function RootLayout({
