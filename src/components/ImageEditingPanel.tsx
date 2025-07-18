@@ -7,6 +7,10 @@ import { isValidImageFormat, createImagePreview, formatFileSize, generateUniqueI
 import { editImage } from '@/utils/openai';
 import { Edit3, Upload, X, Info, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { Box, Typography, Button, TextField, Radio, RadioGroup, FormControl, FormLabel, FormControlLabel, LinearProgress, Grid, IconButton, Paper, Avatar, CircularProgress } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 interface ImageEditingPanelProps {
   onImageEdited: (images: any[]) => void;
@@ -127,135 +131,110 @@ export default function ImageEditingPanel({
   const estimatedTokens = calculateTokenCost('high', '1024x1024', inputFidelity);
 
   return (
-    <div className="bg-white border rounded-lg p-6 space-y-6">
-      <div className="flex items-center gap-2">
-        <Edit3 className="w-5 h-5" />
-        <h2 className="text-xl font-semibold">Image Editing</h2>
-      </div>
-
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium mb-2">
-            Upload Images *
-          </label>
-          <div
-            {...getRootProps()}
-            className={cn(
-              "border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors",
-              isDragActive ? "border-blue-500 bg-blue-50" : "border-gray-300 hover:border-gray-400"
-            )}
-          >
-            <input {...getInputProps()} />
-            <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
-            <p className="text-sm text-gray-600">
-              {isDragActive ? 'Drop images here...' : 'Drag & drop images here, or click to select'}
-            </p>
-            <p className="text-xs text-gray-500 mt-1">
-              PNG, JPEG, WebP, GIF (max 50MB each)
-            </p>
-          </div>
-        </div>
-
-        {uploadedImages.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {uploadedImages.map((image) => (
-              <div key={image.id} className="relative">
-                <img
-                  src={image.preview}
-                  alt="Upload preview"
-                  className="w-full h-32 object-cover rounded-lg border"
-                />
-                <button
-                  onClick={() => removeImage(image.id)}
-                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-                <div className="absolute bottom-1 left-1 bg-black/50 text-white text-xs px-2 py-1 rounded">
-                  {formatFileSize(image.file.size)}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <div>
-          <label className="block text-sm font-medium mb-2">
-            Edit Prompt *
-          </label>
-          <textarea
-            value={editPrompt}
-            onChange={(e) => setEditPrompt(e.target.value)}
-            placeholder="Describe how you want to edit the image..."
-            className="w-full px-3 py-2 border rounded-md min-h-[100px] resize-y focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-2">Input Fidelity</label>
-          <div className="space-y-2">
-            <label className="flex items-center gap-2">
-              <input
-                type="radio"
-                value="low"
-                checked={inputFidelity === 'low'}
+    <Paper elevation={3} sx={{ p: 4, borderRadius: 3 }}>
+      <Box display="flex" alignItems="center" gap={1} mb={2}>
+        <EditIcon color="primary" />
+        <Typography variant="h6" fontWeight={600}>Edición de Imagen</Typography>
+      </Box>
+      <Box component="form" noValidate autoComplete="off">
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <FormLabel component="legend" sx={{ mb: 1 }}>Subir imágenes *</FormLabel>
+            <Box
+              {...getRootProps()}
+              sx={{
+                border: '2px dashed',
+                borderColor: isDragActive ? 'primary.main' : 'grey.400',
+                bgcolor: isDragActive ? 'primary.lighter' : 'background.paper',
+                borderRadius: 2,
+                p: 3,
+                textAlign: 'center',
+                cursor: 'pointer',
+                transition: 'border-color 0.2s',
+              }}
+            >
+              <input {...getInputProps()} />
+              <CloudUploadIcon sx={{ fontSize: 40, color: 'grey.400', mb: 1 }} />
+              <Typography variant="body2" color="text.secondary">
+                {isDragActive ? 'Suelta las imágenes aquí...' : 'Arrastra y suelta imágenes aquí, o haz clic para seleccionar'}
+              </Typography>
+              <Typography variant="caption" color="text.disabled" display="block" mt={1}>
+                PNG, JPEG, WebP, GIF (máx 50MB cada una)
+              </Typography>
+            </Box>
+          </Grid>
+          {uploadedImages.length > 0 && (
+            <Grid item xs={12}>
+              <Grid container spacing={2}>
+                {uploadedImages.map((image) => (
+                  <Grid item xs={6} md={4} key={image.id}>
+                    <Box position="relative">
+                      <Avatar
+                        variant="rounded"
+                        src={image.preview}
+                        alt="Upload preview"
+                        sx={{ width: '100%', height: 100, borderRadius: 2, border: 1, borderColor: 'grey.300', objectFit: 'cover' }}
+                      />
+                      <IconButton
+                        size="small"
+                        onClick={() => removeImage(image.id)}
+                        sx={{ position: 'absolute', top: 4, right: 4, bgcolor: 'error.main', color: 'white', '&:hover': { bgcolor: 'error.dark' } }}
+                        aria-label="Eliminar imagen"
+                      >
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                      <Box position="absolute" bottom={4} left={4} bgcolor="rgba(0,0,0,0.5)" color="white" px={1} py={0.5} borderRadius={1} fontSize={12}>
+                        {formatFileSize(image.file.size)}
+                      </Box>
+                    </Box>
+                  </Grid>
+                ))}
+              </Grid>
+            </Grid>
+          )}
+          <Grid item xs={12}>
+            <FormLabel component="legend" sx={{ mb: 1 }}>Prompt de edición *</FormLabel>
+            <TextField
+              value={editPrompt}
+              onChange={(e) => setEditPrompt(e.target.value)}
+              placeholder="Describe cómo quieres editar la imagen..."
+              multiline
+              minRows={4}
+              fullWidth
+              required
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <FormControl component="fieldset">
+              <FormLabel component="legend">Fidelidad de entrada</FormLabel>
+              <RadioGroup
+                row
+                value={inputFidelity}
                 onChange={(e) => setInputFidelity(e.target.value as 'low' | 'high')}
-                className="text-blue-600"
-              />
-              <span className="text-sm">Low Fidelity - Faster processing</span>
-            </label>
-            <label className="flex items-center gap-2">
-              <input
-                type="radio"
-                value="high"
-                checked={inputFidelity === 'high'}
-                onChange={(e) => setInputFidelity(e.target.value as 'low' | 'high')}
-                className="text-blue-600"
-              />
-              <span className="text-sm">High Fidelity - Preserves faces, logos, and details</span>
-            </label>
-          </div>
-        </div>
-
-        <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
-          <div className="flex items-start gap-2">
-            <Info className="w-5 h-5 text-blue-600 mt-0.5" />
-            <div className="text-sm text-blue-800">
-              <p className="font-medium mb-1">High fidelity preserves:</p>
-              <ul className="list-disc ml-4 space-y-1">
-                <li>Face preservation</li>
-                <li>Logo and brand consistency</li>
-                <li>Product photography details</li>
-                <li>Fashion retouching quality</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between pt-4 border-t">
-          <div className="text-sm text-gray-600">
-            Estimated tokens: {estimatedTokens.toLocaleString()}
-          </div>
-          
-          <button
-            onClick={handleEdit}
-            disabled={isEditing || uploadedImages.length === 0 || !editPrompt.trim()}
-            className={cn(
-              "px-6 py-2 bg-blue-600 text-white rounded-md font-medium",
-              "hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed",
-              "flex items-center gap-2"
-            )}
-          >
-            {isEditing ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Edit3 className="w-4 h-4" />
-            )}
-            {isEditing ? 'Editing...' : 'Edit Image'}
-          </button>
-        </div>
-      </div>
-    </div>
+              >
+                <FormControlLabel value="low" control={<Radio color="primary" />} label="Baja fidelidad - Procesamiento más rápido" />
+                <FormControlLabel value="high" control={<Radio color="primary" />} label="Alta fidelidad - Preserva rostros, logos y detalles" />
+              </RadioGroup>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} display="flex" alignItems="center" justifyContent="space-between" borderTop={1} borderColor="grey.200" pt={2}>
+            <Typography variant="body2" color="text.secondary">
+              Tokens estimados: {estimatedTokens.toLocaleString()}
+            </Typography>
+            <Button
+              onClick={handleEdit}
+              disabled={isEditing || uploadedImages.length === 0 || !editPrompt.trim()}
+              variant="contained"
+              color="primary"
+              startIcon={isEditing ? <CircularProgress size={18} color="inherit" /> : <EditIcon />}
+              sx={{ minWidth: 140 }}
+            >
+              {isEditing ? 'Editando...' : 'Editar imagen'}
+            </Button>
+          </Grid>
+        </Grid>
+      </Box>
+    </Paper>
   );
 }

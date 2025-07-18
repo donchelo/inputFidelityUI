@@ -5,7 +5,8 @@ import { Toaster } from 'react-hot-toast';
 import { GeneratedImage, ProgressState } from '@/types';
 import ImageEditingPanel from '@/components/ImageEditingPanel';
 import ResultsPanel from '@/components/ResultsPanel';
-import { Palette } from 'lucide-react';
+import { Box, Container, Typography, Grid, Paper, Divider } from '@mui/material';
+import PaletteIcon from '@mui/icons-material/Palette';
 
 export default function Home() {
   const [editedImages, setEditedImages] = useState<GeneratedImage[]>([]);
@@ -24,47 +25,44 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <Box minHeight="100vh" sx={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)' }}>
       <Toaster position="top-right" />
-      
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4 flex items-center justify-center gap-3">
-            <Palette className="w-10 h-10 text-purple-600" />
-            GPT Image-1 Editor
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Edit images with high input fidelity using OpenAI's GPT Image-1 model
-          </p>
-        </div>
-
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-6">
-              <ImageEditingPanel
-                onImageEdited={handleImageEdited}
-                onProgressUpdate={handleProgressUpdate}
-              />
-            </div>
-
-            <div className="lg:col-span-1">
-              <ResultsPanel
-                images={editedImages}
-                progress={progress}
-              />
-            </div>
-          </div>
-        </div>
-
-        <footer className="mt-16 text-center text-gray-500 text-sm">
-          <p>
+      <Container maxWidth="lg" sx={{ py: 8 }}>
+        <Box textAlign="center" mb={8}>
+          <Box display="flex" alignItems="center" justifyContent="center" gap={2} mb={2}>
+            <PaletteIcon sx={{ fontSize: 48, color: 'primary.main' }} />
+            <Typography variant="h3" fontWeight={700} color="text.primary">
+              GPT Image-1 Editor
+            </Typography>
+          </Box>
+          <Typography variant="h6" color="text.secondary" maxWidth={600} mx="auto">
+            Edita imágenes con alta fidelidad de entrada usando el modelo GPT Image-1 de OpenAI
+          </Typography>
+        </Box>
+        <Grid container spacing={4}>
+          <Grid item xs={12} lg={8}>
+            <ImageEditingPanel
+              onImageEdited={handleImageEdited}
+              onProgressUpdate={handleProgressUpdate}
+            />
+          </Grid>
+          <Grid item xs={12} lg={4}>
+            <ResultsPanel
+              images={editedImages}
+              progress={progress}
+            />
+          </Grid>
+        </Grid>
+        <Divider sx={{ my: 8 }} />
+        <Box component="footer" textAlign="center" color="text.secondary" fontSize={14}>
+          <Typography>
             Powered by OpenAI's GPT Image-1 model with high input fidelity capabilities
-          </p>
-          <p className="mt-2">
-            Built with Next.js, React, and Tailwind CSS
-          </p>
-        </footer>
-      </div>
-    </div>
+          </Typography>
+          <Typography mt={1}>
+            Built with Next.js, React, and Material UI
+          </Typography>
+        </Box>
+      </Container>
+    </Box>
   );
 }
