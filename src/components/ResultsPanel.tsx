@@ -29,69 +29,67 @@ export default function ResultsPanel({ images, progress }: ResultsPanelProps) {
   };
 
   return (
-    <Paper elevation={3} sx={{ p: 4, borderRadius: 3 }}>
-      <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
+    <Paper elevation={1} sx={{ p: 2, borderRadius: 2 }}>
+      <Box display="flex" alignItems="center" justifyContent="space-between" mb={1}>
         <Box display="flex" alignItems="center" gap={1}>
-          <ImageIcon color="primary" />
-          <Typography variant="h6" fontWeight={600}>Resultados</Typography>
+          <ImageIcon color="primary" fontSize="small" />
+          <Typography variant="subtitle1" fontWeight={600}>Resultados</Typography>
         </Box>
         {images.length > 0 && (
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="caption" color="text.secondary">
             {images.length} imagen{images.length !== 1 ? 'es' : ''}
           </Typography>
         )}
       </Box>
-
       {progress.isLoading && (
-        <Box mb={3}>
-          <Box display="flex" alignItems="center" gap={1} mb={1}>
-            <CircularProgress size={20} color="primary" />
-            <Typography variant="body2" textTransform="capitalize">{progress.stage}...</Typography>
+        <Box mb={1}>
+          <Box display="flex" alignItems="center" gap={1} mb={0.5}>
+            <CircularProgress size={16} color="primary" />
+            <Typography variant="caption" textTransform="capitalize">{progress.stage}...</Typography>
           </Box>
-          <LinearProgress variant="determinate" value={progress.progress} />
+          <LinearProgress variant="determinate" value={progress.progress} sx={{ height: 4, borderRadius: 2 }} />
         </Box>
       )}
-
       {images.length === 0 && !progress.isLoading && (
-        <Box textAlign="center" py={6}>
-          <ImageIcon sx={{ fontSize: 48, color: 'grey.400', mb: 2 }} />
-          <Typography color="text.secondary">Aún no se han editado imágenes</Typography>
-          <Typography variant="caption" color="text.disabled" display="block" mt={1}>
-            Sube una imagen y agrega un prompt de edición para comenzar
+        <Box textAlign="center" py={2}>
+          <ImageIcon sx={{ fontSize: 32, color: 'grey.400', mb: 1 }} />
+          <Typography color="text.secondary" variant="caption">Aún no se han editado imágenes</Typography>
+          <Typography variant="caption" color="text.disabled" display="block">
+            Sube una imagen y agrega un prompt para comenzar
           </Typography>
         </Box>
       )}
-
       {images.length > 0 && (
-        <Grid container spacing={2}>
+        <Grid container spacing={1}>
           {images.map((image) => (
             <Grid item xs={12} key={image.id}>
-              <Paper variant="outlined" sx={{ borderRadius: 2, overflow: 'hidden', bgcolor: 'grey.50' }}>
+              <Paper variant="outlined" sx={{ borderRadius: 2, overflow: 'hidden', bgcolor: 'grey.50', mb: 0.5 }}>
                 <Box position="relative">
                   {isValidImage(image) ? (
                     <Box
                       component="img"
                       src={image.url || `data:image/png;base64,${image.base64}`}
                       alt="Edited image"
-                      sx={{ width: '100%', height: 192, objectFit: 'cover', cursor: 'pointer' }}
+                      sx={{ width: '100%', height: 100, objectFit: 'cover', cursor: 'pointer' }}
                       onClick={() => setSelectedImage(image)}
                     />
                   ) : (
-                    <Box width="100%" height={192} display="flex" alignItems="center" justifyContent="center" bgcolor="grey.100">
-                      <Typography color="text.disabled">Imagen no disponible</Typography>
+                    <Box width="100%" height={100} display="flex" alignItems="center" justifyContent="center" bgcolor="grey.100">
+                      <Typography variant="caption" color="text.disabled">Imagen no disponible</Typography>
                     </Box>
                   )}
                   <IconButton
+                    size="small"
                     onClick={() => setSelectedImage(image)}
-                    sx={{ position: 'absolute', top: 8, right: 8, bgcolor: 'white', color: 'primary.main', '&:hover': { bgcolor: 'grey.100' } }}
+                    sx={{ position: 'absolute', top: 4, right: 4, bgcolor: 'white', color: 'primary.main', '&:hover': { bgcolor: 'grey.100' } }}
                     aria-label="Ver imagen"
                   >
-                    <VisibilityIcon />
+                    <VisibilityIcon fontSize="small" />
                   </IconButton>
                 </Box>
-                <Box p={2}>
+                <Box p={1}>
                   {image.metadata.revised_prompt && (
-                    <Typography variant="body2" color="text.secondary" mb={1} sx={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                    <Typography variant="caption" color="text.secondary" mb={0.5} sx={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                       {image.metadata.revised_prompt}
                     </Typography>
                   )}
@@ -100,7 +98,9 @@ export default function ResultsPanel({ images, progress }: ResultsPanelProps) {
                     variant="contained"
                     color="primary"
                     fullWidth
-                    startIcon={<DownloadIcon />}
+                    size="small"
+                    startIcon={<DownloadIcon fontSize="small" />}
+                    sx={{ mt: 0.5 }}
                   >
                     Descargar
                   </Button>
@@ -110,32 +110,31 @@ export default function ResultsPanel({ images, progress }: ResultsPanelProps) {
           ))}
         </Grid>
       )}
-
-      <Dialog open={!!selectedImage} onClose={() => setSelectedImage(null)} maxWidth="lg" fullWidth>
-        <DialogTitle>
+      <Dialog open={!!selectedImage} onClose={() => setSelectedImage(null)} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ p: 2 }}>
           <Box display="flex" alignItems="center" justifyContent="space-between">
-            <Typography variant="h6">Vista previa</Typography>
-            <IconButton onClick={() => setSelectedImage(null)}>
-              <CloseIcon />
+            <Typography variant="subtitle1">Vista previa</Typography>
+            <IconButton size="small" onClick={() => setSelectedImage(null)}>
+              <CloseIcon fontSize="small" />
             </IconButton>
           </Box>
         </DialogTitle>
-        <DialogContent sx={{ bgcolor: 'black', display: 'flex', justifyContent: 'center', alignItems: 'center', p: 2 }}>
+        <DialogContent sx={{ bgcolor: 'black', display: 'flex', justifyContent: 'center', alignItems: 'center', p: 1 }}>
           {selectedImage && isValidImage(selectedImage) ? (
             <Box
               component="img"
               src={selectedImage.url || `data:image/png;base64,${selectedImage.base64}`}
               alt="Edited image"
-              sx={{ maxWidth: '100%', maxHeight: '70vh', objectFit: 'contain', borderRadius: 2 }}
+              sx={{ maxWidth: '100%', maxHeight: '60vh', objectFit: 'contain', borderRadius: 2 }}
             />
           ) : (
-            <Box width={400} height={400} display="flex" alignItems="center" justifyContent="center" bgcolor="grey.100" borderRadius={2}>
-              <Typography color="text.disabled">Imagen no disponible</Typography>
+            <Box width={200} height={200} display="flex" alignItems="center" justifyContent="center" bgcolor="grey.100" borderRadius={2}>
+              <Typography variant="caption" color="text.disabled">Imagen no disponible</Typography>
             </Box>
           )}
           {selectedImage && selectedImage.metadata.revised_prompt && (
-            <Box position="absolute" bottom={24} left={24} right={24} bgcolor="rgba(0,0,0,0.7)" color="white" p={2} borderRadius={2}>
-              <Typography variant="body2">{selectedImage.metadata.revised_prompt}</Typography>
+            <Box position="absolute" bottom={16} left={16} right={16} bgcolor="rgba(0,0,0,0.7)" color="white" p={1} borderRadius={2}>
+              <Typography variant="caption">{selectedImage.metadata.revised_prompt}</Typography>
             </Box>
           )}
         </DialogContent>

@@ -131,59 +131,99 @@ export default function ImageEditingPanel({
   const estimatedTokens = calculateTokenCost('high', '1024x1024', inputFidelity);
 
   return (
-    <Paper elevation={3} sx={{ p: 4, borderRadius: 3 }}>
-      <Box display="flex" alignItems="center" gap={1} mb={2}>
-        <EditIcon color="primary" />
-        <Typography variant="h6" fontWeight={600}>Edición de Imagen</Typography>
+    <Paper elevation={1} sx={{ p: 2, borderRadius: 2 }}>
+      <Box display="flex" alignItems="center" gap={1} mb={1}>
+        <EditIcon color="primary" fontSize="small" />
+        <Typography variant="subtitle1" fontWeight={600}>Edición de Imagen</Typography>
       </Box>
       <Box component="form" noValidate autoComplete="off">
-        <Grid container spacing={3}>
+        <Grid container spacing={1}>
           <Grid item xs={12}>
-            <FormLabel component="legend" sx={{ mb: 1 }}>Subir imágenes *</FormLabel>
-            <Box
-              {...getRootProps()}
-              sx={{
-                border: '2px dashed',
-                borderColor: isDragActive ? 'primary.main' : 'grey.400',
-                bgcolor: isDragActive ? 'primary.lighter' : 'background.paper',
-                borderRadius: 2,
-                p: 3,
-                textAlign: 'center',
-                cursor: 'pointer',
-                transition: 'border-color 0.2s',
-              }}
-            >
-              <input {...getInputProps()} />
-              <CloudUploadIcon sx={{ fontSize: 40, color: 'grey.400', mb: 1 }} />
-              <Typography variant="body2" color="text.secondary">
-                {isDragActive ? 'Suelta las imágenes aquí...' : 'Arrastra y suelta imágenes aquí, o haz clic para seleccionar'}
-              </Typography>
-              <Typography variant="caption" color="text.disabled" display="block" mt={1}>
-                PNG, JPEG, WebP, GIF (máx 50MB cada una)
-              </Typography>
-            </Box>
+            <FormLabel component="legend" sx={{ mb: 0.5, fontSize: 13 }}>Imagen *</FormLabel>
+            {uploadedImages.length === 0 ? (
+              <Box
+                {...getRootProps()}
+                sx={{
+                  border: '1.5px dashed',
+                  borderColor: isDragActive ? 'primary.main' : 'grey.400',
+                  bgcolor: isDragActive ? 'primary.lighter' : 'background.paper',
+                  borderRadius: 2,
+                  p: 2,
+                  textAlign: 'center',
+                  cursor: 'pointer',
+                  minHeight: 120,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <input {...getInputProps()} />
+                <CloudUploadIcon sx={{ fontSize: 28, color: 'grey.400', mb: 0.5 }} />
+                <Typography variant="caption" color="text.secondary">
+                  {isDragActive ? 'Suelta aquí...' : 'Arrastra o haz clic para seleccionar'}
+                </Typography>
+                <Typography variant="caption" color="text.disabled" display="block">
+                  PNG, JPEG, WebP, GIF (máx 50MB)
+                </Typography>
+              </Box>
+            ) : (
+              <Box
+                position="relative"
+                sx={{
+                  border: '1.5px solid',
+                  borderColor: 'primary.main',
+                  borderRadius: 2,
+                  p: 0,
+                  minHeight: 120,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  overflow: 'hidden',
+                  bgcolor: 'background.paper',
+                }}
+              >
+                <Box
+                  component="img"
+                  src={uploadedImages[0].preview}
+                  alt="Preview de la imagen subida"
+                  sx={{ width: '100%', height: 120, objectFit: 'contain', borderRadius: 2 }}
+                />
+                <IconButton
+                  size="small"
+                  onClick={() => removeImage(uploadedImages[0].id)}
+                  sx={{ position: 'absolute', top: 4, right: 4, bgcolor: 'error.main', color: 'white', '&:hover': { bgcolor: 'error.dark' } }}
+                  aria-label="Eliminar imagen"
+                >
+                  <DeleteIcon fontSize="small" />
+                </IconButton>
+                <Box position="absolute" bottom={4} left={4} bgcolor="rgba(0,0,0,0.5)" color="white" px={0.5} py={0.2} borderRadius={1} fontSize={10}>
+                  {formatFileSize(uploadedImages[0].file.size)}
+                </Box>
+              </Box>
+            )}
           </Grid>
-          {uploadedImages.length > 0 && (
+          {uploadedImages.length > 1 && (
             <Grid item xs={12}>
-              <Grid container spacing={2}>
-                {uploadedImages.map((image) => (
+              <Grid container spacing={1}>
+                {uploadedImages.slice(1).map((image) => (
                   <Grid item xs={6} md={4} key={image.id}>
                     <Box position="relative">
                       <Avatar
                         variant="rounded"
                         src={image.preview}
                         alt="Upload preview"
-                        sx={{ width: '100%', height: 100, borderRadius: 2, border: 1, borderColor: 'grey.300', objectFit: 'cover' }}
+                        sx={{ width: '100%', height: 60, borderRadius: 2, border: 1, borderColor: 'grey.300', objectFit: 'cover' }}
                       />
                       <IconButton
                         size="small"
                         onClick={() => removeImage(image.id)}
-                        sx={{ position: 'absolute', top: 4, right: 4, bgcolor: 'error.main', color: 'white', '&:hover': { bgcolor: 'error.dark' } }}
+                        sx={{ position: 'absolute', top: 2, right: 2, bgcolor: 'error.main', color: 'white', '&:hover': { bgcolor: 'error.dark' } }}
                         aria-label="Eliminar imagen"
                       >
                         <DeleteIcon fontSize="small" />
                       </IconButton>
-                      <Box position="absolute" bottom={4} left={4} bgcolor="rgba(0,0,0,0.5)" color="white" px={1} py={0.5} borderRadius={1} fontSize={12}>
+                      <Box position="absolute" bottom={2} left={2} bgcolor="rgba(0,0,0,0.5)" color="white" px={0.5} py={0.2} borderRadius={1} fontSize={10}>
                         {formatFileSize(image.file.size)}
                       </Box>
                     </Box>
@@ -193,33 +233,37 @@ export default function ImageEditingPanel({
             </Grid>
           )}
           <Grid item xs={12}>
-            <FormLabel component="legend" sx={{ mb: 1 }}>Prompt de edición *</FormLabel>
+            <FormLabel component="legend" sx={{ mb: 0.5, fontSize: 13 }}>Prompt *</FormLabel>
             <TextField
               value={editPrompt}
               onChange={(e) => setEditPrompt(e.target.value)}
               placeholder="Describe cómo quieres editar la imagen..."
               multiline
-              minRows={4}
+              minRows={2}
+              maxRows={4}
               fullWidth
               required
               variant="outlined"
+              size="small"
+              sx={{ mt: 0, mb: 1 }}
             />
           </Grid>
           <Grid item xs={12}>
-            <FormControl component="fieldset">
-              <FormLabel component="legend">Fidelidad de entrada</FormLabel>
+            <FormControl component="fieldset" size="small" sx={{ width: '100%' }}>
+              <FormLabel component="legend" sx={{ fontSize: 13 }}>Fidelidad</FormLabel>
               <RadioGroup
                 row
                 value={inputFidelity}
                 onChange={(e) => setInputFidelity(e.target.value as 'low' | 'high')}
+                sx={{ gap: 1 }}
               >
-                <FormControlLabel value="low" control={<Radio color="primary" />} label="Baja fidelidad - Procesamiento más rápido" />
-                <FormControlLabel value="high" control={<Radio color="primary" />} label="Alta fidelidad - Preserva rostros, logos y detalles" />
+                <FormControlLabel value="low" control={<Radio size="small" color="primary" />} label={<Typography fontSize={12}>Baja</Typography>} />
+                <FormControlLabel value="high" control={<Radio size="small" color="primary" />} label={<Typography fontSize={12}>Alta</Typography>} />
               </RadioGroup>
             </FormControl>
           </Grid>
-          <Grid item xs={12} display="flex" alignItems="center" justifyContent="space-between" borderTop={1} borderColor="grey.200" pt={2}>
-            <Typography variant="body2" color="text.secondary">
+          <Grid item xs={12} display="flex" alignItems="center" justifyContent="space-between" borderTop={1} borderColor="grey.200" pt={1}>
+            <Typography variant="caption" color="text.secondary">
               Tokens estimados: {estimatedTokens.toLocaleString()}
             </Typography>
             <Button
@@ -227,10 +271,11 @@ export default function ImageEditingPanel({
               disabled={isEditing || uploadedImages.length === 0 || !editPrompt.trim()}
               variant="contained"
               color="primary"
-              startIcon={isEditing ? <CircularProgress size={18} color="inherit" /> : <EditIcon />}
-              sx={{ minWidth: 140 }}
+              size="small"
+              startIcon={isEditing ? <CircularProgress size={14} color="inherit" /> : <EditIcon fontSize="small" />}
+              sx={{ minWidth: 100 }}
             >
-              {isEditing ? 'Editando...' : 'Editar imagen'}
+              {isEditing ? 'Editando...' : 'Editar'}
             </Button>
           </Grid>
         </Grid>
