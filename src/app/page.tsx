@@ -42,14 +42,14 @@ export default function Home() {
             Edita imágenes fácilmente usando inteligencia artificial avanzada
           </Typography>
         </Box>
-        <Grid container spacing={3} alignItems="stretch">
-          <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column' }}>
+        <Grid container spacing={3} sx={{ alignItems: 'stretch' }}>
+          <Grid size={{ xs: 12, md: 6 }} sx={{ display: 'flex', flexDirection: 'column' }}>
             <ImageEditingPanel
               onImageEdited={handleImageEdited}
               onProgressUpdate={handleProgressUpdate}
             />
           </Grid>
-          <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Grid size={{ xs: 12, md: 6 }} sx={{ display: 'flex', flexDirection: 'column' }}>
             <ResultsPanel
               images={editedImages}
               progress={progress}
