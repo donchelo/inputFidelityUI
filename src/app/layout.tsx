@@ -1,12 +1,10 @@
-import type { Metadata } from 'next';
+"use client";
 import { Inter } from 'next/font/google';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import ai4uTheme from '../theme';
 
 const inter = Inter({ subsets: ['latin'] });
-
-export const metadata: Metadata = {
-  title: 'AI4U Image Editor',
-  description: 'Edita imágenes fácilmente usando inteligencia artificial avanzada',
-};
 
 export default function RootLayout({
   children,
@@ -16,7 +14,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        {children}
+        <ThemeProvider theme={ai4uTheme}>
+          <CssBaseline />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
