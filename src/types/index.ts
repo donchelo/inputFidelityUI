@@ -5,7 +5,7 @@ export interface ImageEditingParams {
   prompt: string;
   input_fidelity: 'low' | 'high';
   mask?: File;
-  size?: string;
+  size?: '1024x1024' | '256x256' | '512x512' | '1536x1024' | '1024x1536';
   quality?: 'auto' | 'low' | 'medium' | 'high';
   output_format?: 'png' | 'jpeg' | 'webp';
 }

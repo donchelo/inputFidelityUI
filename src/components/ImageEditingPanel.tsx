@@ -4,7 +4,7 @@
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { ImageEditingParams, ImageUpload, ProgressState } from '@/types';
-import { isValidImageFormat, createImagePreview, formatFileSize, generateUniqueId, cn } from '@/utils/helpers';
+import { isValidImageFormat, createImagePreview, formatFileSize, generateUniqueId, cn, calculateTokenCost } from '@/utils/helpers';
 import { imageService } from '@/utils/openai';
 import { Edit3, Upload, X, Info, Loader2, Image as ImageIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -170,8 +170,9 @@ export default function ImageEditingPanel({
         prompt: editPrompt,
         input_fidelity: inputFidelity,
         mask: maskImage?.file,
-        quality: 'auto',
-        output_format: 'png',
+        quality: 'high',
+        output_format: 'jpeg',
+        size: '1024x1024',
       };
 
       devLog('Enviando petición de edición', params);
@@ -383,7 +384,11 @@ export default function ImageEditingPanel({
           </div>
         </div>
 
-        <div className="flex justify-end pt-4 border-t">
+        <div className="flex items-center justify-between pt-4 border-t">
+          <div className="text-sm text-muted-foreground">
+            Estimated tokens: {calculateTokenCost('high', '1024x1024', inputFidelity).toLocaleString()}
+          </div>
+          
           <button
             onClick={handleEdit}
             disabled={isEditing || uploadedImages.length === 0 || !editPrompt.trim()}

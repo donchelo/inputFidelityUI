@@ -20,6 +20,18 @@ export interface EditImageError {
   details?: any;
 }
 
+// Interfaz extendida para parámetros de GPT Image-1
+// Los tipos oficiales de OpenAI aún no incluyen estos parámetros
+interface GPTImage1EditParams {
+  model: 'gpt-image-1';
+  image: File | File[];
+  prompt: string;
+  input_fidelity?: 'low' | 'high';
+  quality?: 'auto' | 'low' | 'medium' | 'high';
+  output_format?: 'png' | 'jpeg' | 'webp';
+  size?: '1024x1024' | '256x256' | '512x512' | '1536x1024' | '1024x1536';
+}
+
 export class OpenAIImageService {
   private static instance: OpenAIImageService;
   private client: OpenAI;
@@ -56,7 +68,9 @@ export class OpenAIImageService {
       }
 
       // Usar la API de OpenAI images.edit con gpt-image-1
-      const response = await this.client.images.edit({
+      // Nota: Los tipos oficiales de OpenAI aún no incluyen gpt-image-1 ni input_fidelity
+      // Por eso usamos 'any' para los parámetros extendidos
+      const editParams: GPTImage1EditParams = {
         model: "gpt-image-1",
         image: imageInput,
         prompt: params.prompt,
@@ -64,7 +78,20 @@ export class OpenAIImageService {
         quality: params.quality || "high",
         output_format: params.output_format || "jpeg",
         size: params.size || "1024x1024"
-      });
+      };
+
+      const response = await this.client.images.edit(editParams as any);
+
+      if (!response.data || response.data.length === 0) {
+        return {
+          success: false,
+          error: 'No se recibió respuesta de la API',
+          errorObj: {
+            type: EditImageErrorType.API,
+            message: 'La API no devolvió imágenes editadas'
+          }
+        };
+      }
 
       return {
         success: true,

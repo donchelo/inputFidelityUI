@@ -43,8 +43,7 @@ export function copyToClipboard(text: string): Promise<void> {
 export function calculateTokenCost(
   quality: 'low' | 'medium' | 'high' = 'high',
   size: string,
-  inputFidelity?: 'low' | 'high',
-  partialImages?: number
+  inputFidelity?: 'low' | 'high'
 ): number {
   const baseCosts = {
     low: { square: 272, portrait: 408, landscape: 400 },
@@ -65,10 +64,6 @@ export function calculateTokenCost(
   if (inputFidelity === 'high') {
     const additionalCost = sizeType === 'square' ? 4096 : 6144;
     cost += additionalCost;
-  }
-
-  if (partialImages) {
-    cost += partialImages * 100;
   }
 
   return cost;
