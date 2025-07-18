@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { GeneratedImage, ProgressState } from '@/types';
 import { downloadImage } from '@/utils/helpers';
 import { Box, Typography, Button, Grid, IconButton, Avatar, Dialog, DialogTitle, DialogContent, LinearProgress, Paper, CircularProgress } from '@mui/material';
@@ -17,12 +17,28 @@ interface ResultsPanelProps {
 
 export default function ResultsPanel({ images, progress }: ResultsPanelProps) {
   const [selectedImage, setSelectedImage] = useState<GeneratedImage | null>(null);
+  // Referencia para evitar la descarga automática en el primer render
+  const isFirstRender = useRef(true);
 
   const handleDownload = (image: GeneratedImage) => {
     const url = image.url || `data:image/png;base64,${image.base64}`;
     downloadImage(url, `edited-image-${image.id}.jpg`);
     toast.success('Imagen descargada exitosamente!');
   };
+
+  // Efecto para descargar automáticamente la última imagen generada
+  useEffect(() => {
+    if (images.length === 0) return;
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    const lastImage = images[images.length - 1];
+    if (lastImage && ((lastImage.url && lastImage.url !== '') || (lastImage.base64 && lastImage.base64 !== 'undefined'))) {
+      handleDownload(lastImage);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [images.length]);
 
   const isValidImage = (image: GeneratedImage) => {
     return (image.url && image.url !== '') || (image.base64 && image.base64 !== 'undefined');
