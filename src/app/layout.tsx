@@ -4,6 +4,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import ai4uTheme from '../theme';
 import '../styles/fonts.css';
+import PromptHelpButton from '../components/PromptHelpButton';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -18,6 +19,7 @@ export default function RootLayout({
         <ThemeProvider theme={ai4uTheme}>
           <CssBaseline />
           {children}
+          <PromptHelpButton />
         </ThemeProvider>
       </body>
     </html>
